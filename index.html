@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Invest Gym</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ft-cream:#FDF0DC;--ft-salmon:#F2DFC0;--ft-dark:#1A1A2E;--ft-ink:#2C2C3E;
+  --ft-muted:#5C5C7A;--ft-rule:#D4A853;--ft-red:#C0392B;--ft-green:#1A6B3C;
+  --bg:#0f1b2d;--surf:#1a2e4a;--surf2:#213554;
+  --bdr:rgba(255,255,255,.1);--bdr2:rgba(255,255,255,.18);
+  --tx:#e8edf4;--tx2:#8fa8c8;--tx3:#5a7a9a;
+  --blue:#3b82f6;--blue-d:#1d4ed8;--green:#10b981;
+  --amber:#f59e0b;--red:#ef4444;--r:10px;--rs:6px;
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--tx);font-family:'Source Sans 3',system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh;-webkit-tap-highlight-color:transparent}
+.page{max-width:880px;margin:0 auto;padding:1rem .875rem 4rem}
+
+.logo{text-align:center;padding:1.5rem 0 1.2rem;border-bottom:.5px solid var(--bdr);margin-bottom:1.25rem}
+.logo-mark{font-family:'Playfair Display',Georgia,serif;font-size:clamp(28px,7vw,40px);font-weight:900;letter-spacing:-1px;color:var(--tx)}
+.logo-mark span{color:var(--amber)}
+.logo-sub{font-size:11px;color:var(--tx3);letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+
+.card{background:var(--surf);border:.5px solid var(--bdr);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:.875rem}
+.ctitle{font-size:11px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.875rem;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.875rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
+@media(max-width:600px){.g2{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:360px){.g4{grid-template-columns:1fr}}
+
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.bg1{background:rgba(16,185,129,.15);color:#10b981}
+.bg2{background:rgba(59,130,246,.15);color:#93c5fd}
+.bgd{background:rgba(255,255,255,.07);color:var(--tx2)}
+
+.metric{background:var(--surf2);border:.5px solid var(--bdr);border-radius:var(--rs);padding:.7rem .875rem;text-align:center}
+.mlabel{font-size:10px;color:var(--tx3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px}
+.mval{font-size:clamp(13px,3.5vw,17px);font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--tx);word-break:break-all}
+.mval.gr{color:var(--green)}.mval.rd{color:var(--red)}.mval.am{color:var(--amber)}.mval.bl{color:#93c5fd}
+
+.frow{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.frow label{font-size:12px;color:var(--tx2);flex:0 0 155px;white-space:nowrap}
+.frow-in{display:flex;gap:8px;align-items:center;flex:1;min-width:0}
+@media(max-width:560px){.frow{flex-direction:column;align-items:stretch;gap:4px}.frow label{flex:none}}
+
+.tinp{width:100%;background:var(--surf2);border:.5px solid var(--bdr2);border-radius:var(--rs);color:var(--tx);font-size:14px;padding:8px 12px;outline:none;font-family:inherit;transition:border-color .15s;-webkit-appearance:none}
+.tinp:focus{border-color:var(--blue)}
+.tinp::placeholder{color:var(--tx3)}
+
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--surf2);border-radius:2px;outline:none;cursor:pointer;min-width:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--blue);cursor:pointer;border:3px solid var(--bg)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--blue);cursor:pointer;border:3px solid var(--bg)}
+.ninp{width:90px;background:var(--surf2);border:.5px solid var(--bdr2);border-radius:var(--rs);color:var(--tx);font-size:13px;font-family:'JetBrains Mono',monospace;padding:6px 8px;text-align:right;outline:none;flex-shrink:0;-webkit-appearance:none;-moz-appearance:textfield}
+.ninp:focus{border-color:var(--blue)}.ninp::placeholder{color:var(--tx3)}
+.ninp::-webkit-outer-spin-button,.ninp::-webkit-inner-spin-button{-webkit-appearance:none}
+
+.mbanner{background:rgba(59,130,246,.08);border:.5px solid rgba(59,130,246,.2);border-radius:var(--rs);padding:8px 12px;font-size:12px;color:var(--tx2);margin-bottom:.875rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
+.mbanner strong{color:#93c5fd;font-family:'JetBrains Mono',monospace}
+
+.arow{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.adot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.alabel{font-size:12px;color:var(--tx2);flex:0 0 148px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:420px){.alabel{flex:0 0 100px;font-size:11px}}
+.arow input[type=range]{flex:1;height:3px}
+.arow input[type=range]::-webkit-slider-thumb{width:20px;height:20px}
+.apct{font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--tx);min-width:36px;text-align:right}
+.anum{width:46px;background:var(--surf2);border:.5px solid var(--bdr);border-radius:4px;color:var(--tx);font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 4px;text-align:right;outline:none;-webkit-appearance:none;-moz-appearance:textfield}
+.anum::-webkit-outer-spin-button,.anum::-webkit-inner-spin-button{-webkit-appearance:none}
+.atotal{display:flex;align-items:center;gap:6px;margin-top:5px}
+.abar{flex:1;height:4px;background:var(--surf2);border-radius:2px;overflow:hidden}
+.afill{height:100%;border-radius:2px;transition:width .3s}
+.warn{font-size:11px;color:var(--red);margin-top:4px;display:none}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border-radius:var(--rs);border:.5px solid var(--bdr2);background:transparent;color:var(--tx);font-size:14px;font-weight:500;cursor:pointer;transition:background .15s;font-family:inherit;touch-action:manipulation;min-height:44px}
+.btn:active{opacity:.85}
+.btnp{background:var(--blue);border-color:var(--blue-d);color:#fff}
+.btnp:active{background:var(--blue-d)}
+.brow{display:flex;gap:8px;align-items:center;margin-top:1.1rem;flex-wrap:wrap}
+@media(max-width:500px){.btn{flex:1;font-size:13px}}
+
+.timeline{display:flex;align-items:center;background:var(--surf);border:.5px solid var(--bdr);border-radius:var(--r);padding:.75rem 1rem;margin-bottom:.875rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tl-l{font-size:11px;color:var(--tx3);margin-right:8px;white-space:nowrap}
+.tl-item{display:flex;flex-direction:column;align-items:center;flex:1;min-width:24px}
+.tl-s{width:100%;height:7px;border-radius:3px;background:var(--surf2);border:.5px solid var(--bdr);transition:background .3s;margin-bottom:3px}
+.tl-s.done{background:var(--blue);border-color:var(--blue-d)}
+.tl-s.active{background:#93c5fd;border-color:var(--blue)}
+.tl-s.g1d{background:var(--green);border-color:#059669}
+.tl-s.crash{background:var(--red);border-color:#b91c1c}
+.tl-n{font-size:9px;color:var(--tx3)}
+
+.tabs{display:flex;gap:2px;margin-bottom:.875rem;border-bottom:.5px solid var(--bdr);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:8px 12px;border-radius:var(--rs) var(--rs) 0 0;border:.5px solid transparent;background:transparent;color:var(--tx2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;border-bottom:none;position:relative;bottom:-.5px;white-space:nowrap;min-height:36px}
+.tab.active{background:var(--surf);border-color:var(--bdr);border-bottom-color:var(--surf);color:var(--tx)}
+
+/* GOAL CARDS with dream image */
+.goalg{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-bottom:.875rem}
+.gcard{background:var(--surf);border:.5px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.gcard-dream{width:100%;height:110px;display:block;overflow:hidden;position:relative}
+.gcard-body{padding:.875rem 1rem}
+.gctitle{font-size:11px;color:var(--tx2);margin-bottom:4px;display:flex;align-items:center;gap:5px;font-weight:600}
+.gdream-label{font-size:10px;color:var(--tx3);font-style:italic;margin-bottom:4px}
+.gname{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:6px;line-height:1.3}
+.gval{font-size:clamp(15px,4vw,20px);font-weight:700;font-family:'JetBrains Mono',monospace;margin-bottom:2px;word-break:break-all}
+.pbar{height:5px;background:var(--surf2);border-radius:3px;overflow:hidden;margin:5px 0 3px}
+.pfill{height:100%;border-radius:3px;transition:width .4s}
+
+.rbar{display:flex;align-items:center;flex-wrap:wrap;gap:5px;background:var(--surf2);border:.5px solid var(--bdr);border-radius:var(--rs);padding:8px 12px;margin-bottom:.875rem;font-size:13px}
+
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:440px}
+thead th{text-align:left;padding:6px 7px;color:var(--tx3);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:.5px solid var(--bdr)}
+tbody td{padding:6px 7px;border-bottom:.5px solid rgba(255,255,255,.04);color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:11px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr.crr td{background:rgba(239,68,68,.06)}
+
+.cwrap{position:relative;width:100%;height:220px}
+.cwrap-sm{position:relative;width:100%;height:170px}
+.cleg{display:flex;flex-wrap:wrap;gap:10px;margin-top:7px;font-size:11px;color:var(--tx2)}
+.cleg span{display:flex;align-items:center;gap:4px}
+.ldot{width:10px;height:3px;border-radius:2px;flex-shrink:0}
+
+.ri{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:.5px solid rgba(255,255,255,.04);font-size:13px;gap:8px}
+.ri:last-child{border-bottom:none}
+.rl{color:var(--tx2);flex:1}
+.rv{font-family:'JetBrains Mono',monospace;font-weight:600;text-align:right;font-size:12px}
+.sep{height:.5px;background:var(--bdr);margin:.875rem 0}
+.hidden{display:none!important}
+
+/* ── REALLOC MODAL ── */
+.rov{position:fixed;inset:0;background:rgba(5,10,20,.82);z-index:90;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+@media(min-width:600px){.rov{align-items:center;padding:1rem}}
+.rov.open{opacity:1;pointer-events:all}
+.rmod{background:var(--surf);border-top:.5px solid var(--bdr2);border-radius:var(--r) var(--r) 0 0;padding:1.25rem 1rem 2.5rem;width:100%;max-width:780px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;animation:slideUp .3s ease}
+@media(min-width:600px){.rmod{border-radius:var(--r);border:.5px solid var(--bdr2)}}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.rmod-title{font-size:17px;font-weight:700;color:var(--tx);margin-bottom:3px}
+.rmod-sub{font-size:12px;color:var(--tx2);margin-bottom:1rem}
+.drag-handle{width:36px;height:4px;background:var(--bdr2);border-radius:2px;margin:0 auto 1rem}
+
+.split-block{background:rgba(16,185,129,.06);border:.5px solid rgba(16,185,129,.25);border-radius:var(--rs);padding:10px 14px;margin-bottom:1rem}
+.split-title{font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.split-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:8px 0 5px}
+.split-c1{background:var(--green);transition:width .2s}
+.split-c2{background:#3b82f6;transition:width .2s}
+.split-lbl{display:flex;justify-content:space-between;font-size:11px;font-family:'JetBrains Mono',monospace}
+
+/* ── NEWSPAPER ── */
+.nov{position:fixed;inset:0;background:rgba(5,10,20,.88);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;opacity:0;pointer-events:none;transition:opacity .25s;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:.5rem .5rem 5rem}
+.nov.open{opacity:1;pointer-events:all}
+.nov-inner{max-width:820px;width:100%;margin:0 auto}
+.nov-btn{position:fixed;bottom:0;left:0;right:0;padding:.75rem 1rem;background:rgba(10,20,40,.97);border-top:.5px solid rgba(255,255,255,.1);display:flex;justify-content:center;z-index:101}
+.np{background:var(--ft-cream);color:var(--ft-dark);font-family:'Source Serif 4',Georgia,serif;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+.np-head{background:var(--ft-dark);text-align:center;padding:10px 16px 8px;border-bottom:3px solid var(--ft-rule)}
+.np-name{font-family:'Playfair Display',Georgia,serif;font-size:clamp(24px,7vw,40px);font-weight:900;letter-spacing:2px;color:var(--ft-rule);line-height:1}
+.np-sub{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#a89060;margin-top:3px}
+.np-bar{display:flex;justify-content:space-between;align-items:center;margin-top:7px;padding-top:5px;border-top:.5px solid rgba(212,168,83,.4);font-family:'Source Sans 3',sans-serif;font-size:9px;color:#a89060;flex-wrap:wrap;gap:4px}
+.np-badge{background:var(--ft-rule);color:var(--ft-dark);font-weight:700;padding:2px 7px;font-size:8px;letter-spacing:1px;text-transform:uppercase}
+.np-body{display:grid;grid-template-columns:1fr 300px}
+@media(max-width:580px){.np-body{grid-template-columns:1fr}}
+.np-main{padding:14px 16px;border-right:1px solid #D4B896}
+@media(max-width:580px){.np-main{border-right:none;border-bottom:1px solid #D4B896}}
+.np-side{padding:12px 14px;background:var(--ft-salmon)}
+.np-sec{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ft-muted);border-bottom:1px solid var(--ft-rule);padding-bottom:3px;margin-bottom:8px}
+.np-h{font-family:'Playfair Display',Georgia,serif;font-size:clamp(18px,5vw,25px);font-weight:700;line-height:1.2;color:var(--ft-dark);margin-bottom:8px}
+.np-h.crash{color:var(--ft-red)}
+.np-by{font-family:'Source Sans 3',sans-serif;font-size:9px;color:var(--ft-muted);margin-bottom:8px;padding-bottom:6px;border-bottom:.5px solid #D4B896}
+.np-img{width:100%;height:140px;object-fit:cover;display:block;margin-bottom:4px;filter:sepia(12%) saturate(.9)}
+@media(max-width:400px){.np-img{height:100px}}
+.np-cap{font-family:'Source Sans 3',sans-serif;font-size:9px;color:var(--ft-muted);font-style:italic;margin-bottom:8px}
+.np-sf{font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;line-height:1.5;color:var(--ft-ink);margin-bottom:8px;border-left:3px solid var(--ft-rule);padding-left:9px}
+.np-rl{height:.5px;background:#D4B896;margin:8px 0}
+.np-txt{font-family:'Source Serif 4',serif;font-size:12px;line-height:1.7;color:#3A3A4E}
+.np-out{background:#FFF8EC;border:1px solid var(--ft-rule);border-radius:3px;padding:7px 10px;margin-top:8px;font-family:'Source Sans 3',sans-serif;font-size:11px;color:var(--ft-ink)}
+.np-out-h{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ft-muted);margin-bottom:3px}
+.np-crash{background:#FBE8E6;border:1px solid var(--ft-red);border-radius:3px;padding:7px 10px;margin-top:8px;font-size:11px;color:var(--ft-red);font-family:'Source Sans 3',sans-serif}
+.np-stitle{font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--ft-dark);border-bottom:2px solid var(--ft-rule);padding-bottom:4px;margin-bottom:8px}
+.np-ar{display:flex;align-items:center;padding:4px 0;border-bottom:.5px solid #D4B896;gap:5px}
+.np-ar:last-child{border-bottom:none}
+.np-adot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.np-aname{flex:1;color:var(--ft-ink);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Source Sans 3',sans-serif}
+.np-abar{width:38px;height:4px;background:rgba(0,0,0,.08);border-radius:2px;overflow:hidden;flex-shrink:0}
+.np-abarfill{height:100%;border-radius:2px}
+.np-aval{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;min-width:52px;text-align:right;flex-shrink:0}
+.np-idx{margin-top:10px;border-top:1px solid var(--ft-rule);padding-top:7px}
+.np-idxtitle{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ft-muted);margin-bottom:5px}
+.np-idxrow{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ft-ink);padding:2px 0;border-bottom:.5px dotted #D4B896;gap:4px}
+.np-idxrow:last-child{border-bottom:none}
+.np-idxrow span:last-child{font-weight:600;text-align:right;flex-shrink:0}
+.np-foot{background:var(--ft-dark);color:#a89060;font-family:'Source Sans 3',sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:5px 16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
+/* ── EXPORT STATUS ── */
+.status-ok{background:rgba(16,185,129,.12);border:.5px solid rgba(16,185,129,.3);color:#10b981}
+.status-err{background:rgba(239,68,68,.12);border:.5px solid rgba(239,68,68,.3);color:#fca5a5}
+.status-loading{background:rgba(59,130,246,.1);border:.5px solid rgba(59,130,246,.25);color:#93c5fd}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="logo">
+  <div class="logo-mark">Invest<span>Gym</span></div>
+  <div class="logo-sub">Simulátor investování · 2 cíle · 10 kol</div>
+</div>
+
+<!-- ══════════ SETUP ══════════ -->
+<div id="setup-panel">
+  <div class="card">
+    <div class="ctitle">👤 Účastník</div>
+    <div class="frow">
+      <label>Jméno a příjmení</label>
+      <input type="text" id="participant-name" class="tinp" placeholder="Např. Jan Novák…" style="flex:1">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">⚙ Základní parametry</div>
+    <div class="frow"><label>Počáteční kapitál (Kč)</label>
+      <div class="frow-in"><input type="range" id="s-cap" min="0" max="500000" step="1000" value="0"><input type="number" id="n-cap" class="ninp" min="0" step="1000" placeholder="0"></div></div>
+    <div class="frow"><label>Roční inflace (%)</label>
+      <div class="frow-in"><input type="range" id="s-inf" min="0" max="15" step="0.5" value="0"><input type="number" id="n-inf" class="ninp" min="0" max="15" step="0.5" placeholder="0"></div></div>
+    <div class="frow"><label>Počáteční měs. úložka (Kč)</label>
+      <div class="frow-in"><input type="range" id="s-mon" min="0" max="50000" step="100" value="0"><input type="number" id="n-mon" class="ninp" min="0" step="100" placeholder="0"></div></div>
+    <div class="mbanner"><span>Roční příspěvek:</span><strong id="annual-prev">0 Kč</strong></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ctitle">🎯 Cíl 1 — 3 roky <span class="badge bg1">Kola 1–3</span></div>
+      <p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Pojmenujte svůj 3letý sen:</p>
+      <input type="text" id="g1name" class="tinp" placeholder="Např. Dovolená v Japonsku…" style="margin-bottom:10px">
+      <div class="frow"><label>Cílová částka (Kč)</label>
+        <div class="frow-in"><input type="range" id="s-g1t" min="0" max="500000" step="1000" value="0"><input type="number" id="n-g1t" class="ninp" min="0" step="1000" placeholder="0"></div></div>
+      <div class="frow"><label>Podíl kapitálu C1 (%)</label>
+        <div class="frow-in"><input type="range" id="s-g1s" min="0" max="100" step="5" value="0"><input type="number" id="n-g1s" class="ninp" min="0" max="100" step="5" placeholder="0"></div></div>
+      <p style="font-size:11px;color:var(--tx3);margin-top:2px">Cíl 2 dostane zbývajících <span id="g2rem">100</span> % kapitálu.</p>
+    </div>
+    <div class="card">
+      <div class="ctitle">📈 Cíl 2 — 10 let <span class="badge bg2">Kola 1–10</span></div>
+      <p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Pojmenujte svůj 10letý sen:</p>
+      <input type="text" id="g2name" class="tinp" placeholder="Např. Vlastní byt…" style="margin-bottom:10px">
+      <div class="frow"><label>Cílová částka (Kč)</label>
+        <div class="frow-in"><input type="range" id="s-g2t" min="0" max="2000000" step="5000" value="0"><input type="number" id="n-g2t" class="ninp" min="0" step="5000" placeholder="0"></div></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ctitle">🛡 Alokace — Cíl 1</div>
+      <div id="a1rows"></div>
+      <div class="atotal"><div class="abar"><div class="afill" id="a1fill" style="width:0%"></div></div><span id="a1tot" style="font-size:12px;font-family:monospace;color:var(--tx2)">0 %</span></div>
+      <div class="warn" id="w1">⚠ Součet musí být přesně 100 %</div>
+    </div>
+    <div class="card">
+      <div class="ctitle">🚀 Alokace — Cíl 2</div>
+      <div id="a2rows"></div>
+      <div class="atotal"><div class="abar"><div class="afill" id="a2fill" style="width:0%"></div></div><span id="a2tot" style="font-size:12px;font-family:monospace;color:var(--tx2)">0 %</span></div>
+      <div class="warn" id="w2">⚠ Součet musí být přesně 100 %</div>
+    </div>
+  </div>
+
+  <div class="brow">
+    <button class="btn btnp" onclick="startGame()" style="flex:1;max-width:320px">▶ Spustit Invest Gym</button>
+  </div>
+</div>
+
+<!-- ══════════ HRA ══════════ -->
+<div id="game-panel" class="hidden">
+  <div class="timeline"><span class="tl-l">Rok</span><div id="tlsegs" style="display:flex;align-items:flex-end;gap:3px;flex:1"></div></div>
+  <div class="rbar" id="rbar"></div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('ov')">Přehled</button>
+    <button class="tab" onclick="showTab('po')">Portfolio</button>
+    <button class="tab" onclick="showTab('ch')">Grafy</button>
+    <button class="tab" onclick="showTab('hi')">Historie</button>
+  </div>
+
+  <div id="tab-ov">
+    <div class="g4" id="statcards" style="margin-bottom:.875rem"></div>
+    <div class="g2" style="margin-bottom:.875rem">
+      <div class="metric"><div class="mlabel">Investováno celkem</div><div class="mval" id="s-inv">—</div></div>
+      <div class="metric"><div class="mlabel">Hodnota investic</div><div class="mval bl" id="s-val">—</div></div>
+    </div>
+    <div class="goalg" id="goalcards"></div>
+    <div class="brow">
+      <button class="btn btnp" id="adv-btn" onclick="openRealloc()">▶ Nastavit rok a pokračovat</button>
+      <button class="btn" onclick="resetGame()">↩ Reset</button>
+    </div>
+  </div>
+
+  <div id="tab-po" class="hidden">
+    <div class="g2">
+      <div class="card"><div class="ctitle" id="port1-title">Cíl 1</div><div id="pt1"></div></div>
+      <div class="card"><div class="ctitle">Cíl 2</div><div id="pt2"></div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="ctitle">Cíl 1 — rozložení</div><div class="cwrap-sm"><canvas id="pie1"></canvas></div></div>
+      <div class="card"><div class="ctitle">Cíl 2 — rozložení</div><div class="cwrap-sm"><canvas id="pie2"></canvas></div></div>
+    </div>
+  </div>
+
+  <div id="tab-ch" class="hidden">
+    <div class="card" style="margin-bottom:.875rem">
+      <div class="ctitle">Vývoj Cíle 1 (3 roky)</div>
+      <div class="cwrap"><canvas id="cg1"></canvas></div>
+      <div class="cleg"><span><span class="ldot" style="background:#10b981"></span>Hodnota C1</span><span><span class="ldot" style="background:rgba(255,255,255,.25)"></span>Cíl</span></div>
+    </div>
+    <div class="card" style="margin-bottom:.875rem">
+      <div class="ctitle">Vývoj Cíle 2 (10 let)</div>
+      <div class="cwrap"><canvas id="cg2"></canvas></div>
+      <div class="cleg"><span><span class="ldot" style="background:#3b82f6"></span>Nominální</span><span><span class="ldot" style="background:#f59e0b"></span>Reálná</span><span><span class="ldot" style="background:rgba(16,185,129,.4)"></span>Cíl</span></div>
+    </div>
+    <div class="card">
+      <div class="ctitle">Výnosy aktiv (%)</div>
+      <div class="cwrap"><canvas id="cret"></canvas></div>
+    </div>
+  </div>
+
+  <div id="tab-hi" class="hidden">
+    <div class="card"><div class="ctitle">Kolo po kole</div><div class="tscroll" id="histtbl"></div></div>
+  </div>
+</div>
+
+<!-- ══════════ VÝSLEDKY ══════════ -->
+<div id="results-panel" class="hidden">
+  <div class="card" style="border-color:rgba(212,168,83,.3);margin-bottom:.875rem">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="logo-mark" style="font-size:22px">Invest<span style="color:var(--amber)">Gym</span></div>
+      <div><div style="font-size:15px;font-weight:700">Simulace dokončena</div><div style="font-size:12px;color:var(--tx2)">10 kol · Dekáda rozdělení</div></div>
+    </div>
+  </div>
+  <div class="g4" id="fstats" style="margin-bottom:.875rem"></div>
+  <div class="g2" style="margin-bottom:.875rem">
+    <div class="metric"><div class="mlabel">Investováno celkem</div><div class="mval" id="f-inv">—</div></div>
+    <div class="metric"><div class="mlabel">Hodnota investic</div><div class="mval bl" id="f-val">—</div></div>
+  </div>
+  <div class="card" style="margin-bottom:.875rem">
+    <div class="ctitle">Finální vývoj — Cíl 2</div>
+    <div class="cwrap" style="height:230px"><canvas id="fchart"></canvas></div>
+    <div class="cleg" style="margin-top:7px">
+      <span><span class="ldot" style="background:#3b82f6"></span>Nominální hodnota</span>
+      <span><span class="ldot" style="background:#f59e0b"></span>Reálná hodnota</span>
+      <span><span class="ldot" style="background:#e879f9"></span>Celkem investováno</span>
+      <span><span class="ldot" style="background:rgba(16,185,129,.5)"></span>Cíl</span>
+    </div>
+  </div>
+  <div class="g2" style="margin-bottom:.875rem">
+    <div class="card"><div class="ctitle">Klíčové ukazatele</div><div id="fmetrics"></div></div>
+    <div class="card"><div class="ctitle">Splnění cílů</div><div id="fgoals"></div><div class="sep"></div><p style="font-size:12px;color:var(--tx2);line-height:1.7" id="flesson"></p></div>
+  </div>
+  <div class="brow"><button class="btn btnp" onclick="resetGame()" style="flex:1;max-width:240px">↩ Hrát znovu</button></div>
+
+  <!-- EXPORT SEKCE -->
+  <div class="card" style="margin-top:1rem;border-color:rgba(212,168,83,.3)">
+    <div class="ctitle">📤 Uložit výsledky</div>
+    <div id="export-name-display" style="font-size:14px;color:var(--tx2);margin-bottom:12px">
+      Účastník: <strong id="display-name" style="color:var(--tx)">—</strong>
+    </div>
+
+    <!-- Send to Google Sheets -->
+    <div style="margin-bottom:14px">
+      <button class="btn btnp" onclick="sendToSheets()" id="btn-sheets" style="width:100%;font-size:14px;gap:8px">
+        <span>📊</span> Odeslat výsledky do Google Tabulky
+      </button>
+      <div id="sheets-status" style="margin-top:8px;font-size:12px;display:none;padding:8px 12px;border-radius:var(--rs)"></div>
+    </div>
+
+    <!-- Download TXT -->
+    <div>
+      <button class="btn" onclick="downloadTXT()" style="width:100%;font-size:14px;gap:8px;border-color:rgba(255,255,255,.2)">
+        <span>💾</span> Stáhnout výsledky jako TXT soubor
+      </button>
+      <p style="font-size:11px;color:var(--tx3);margin-top:6px">TXT soubor si student uloží a může ho odevzdat učiteli přímo.</p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ══════════ REALLOC MODAL ══════════ -->
+<div class="rov" id="rov">
+  <div class="rmod">
+    <div class="drag-handle"></div>
+    <div class="rmod-title" id="rmod-title">Nastavení před Rokem X</div>
+    <div class="rmod-sub" id="rmod-sub"></div>
+
+    <div class="frow" style="margin-bottom:6px">
+      <label>Měsíční úložka (Kč)</label>
+      <div class="frow-in"><input type="range" id="rs-mon" min="0" max="50000" step="100" value="0"><input type="number" id="rn-mon" class="ninp" min="0" step="100" placeholder="0"></div>
+    </div>
+    <div class="mbanner" style="margin-bottom:.875rem"><span>Roční příspěvek:</span><strong id="rannual">0 Kč</strong></div>
+
+    <!-- Split savings — only rounds 1-3 -->
+    <div class="split-block" id="split-block">
+      <div class="split-title">📊 Rozdělení ročních úspor mezi cíle</div>
+      <p style="font-size:11px;color:var(--tx3);margin-bottom:10px">Roční příspěvek: <strong id="spl-total-kc" style="color:#93c5fd;font-family:'JetBrains Mono',monospace">0 Kč</strong> — nastavte buď procenty (slider) nebo přímo částkou v Kč.</p>
+
+      <!-- Percent slider row -->
+      <div class="frow" style="margin-bottom:8px">
+        <label>Podíl pro Cíl 1 (%)</label>
+        <div class="frow-in"><input type="range" id="rs-spl" min="0" max="100" step="5" value="0"><input type="number" id="rn-spl" class="ninp" min="0" max="100" step="5" placeholder="0"></div>
+      </div>
+
+      <!-- Visual bar -->
+      <div class="split-bar" style="margin-bottom:8px"><div class="split-c1" id="sv1" style="width:0%"></div><div class="split-c2" id="sv2" style="width:100%"></div></div>
+
+      <!-- Direct Kč inputs -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">
+        <div>
+          <div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:4px">🎯 Cíl 1 — částka (Kč)</div>
+          <input type="number" id="rn-c1kc" class="ninp" min="0" step="100" placeholder="0" style="width:100%">
+          <div style="font-size:10px;color:var(--tx3);margin-top:3px">= <span id="sl1">0 %</span> z ročního příspěvku</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:#93c5fd;font-weight:600;margin-bottom:4px">📈 Cíl 2 — částka (Kč)</div>
+          <input type="number" id="rn-c2kc" class="ninp" min="0" step="100" placeholder="0" style="width:100%">
+          <div style="font-size:10px;color:var(--tx3);margin-top:3px">= <span id="sl2">100 %</span> z ročního příspěvku</div>
+        </div>
+      </div>
+      <div class="warn" id="split-warn" style="display:none">⚠ Součet Kč nesmí překročit roční příspěvek</div>
+    </div>
+
+    <div class="g2">
+      <div id="ra1-wrap">
+        <div class="ctitle" style="margin-bottom:.5rem">🛡 Cíl 1 — alokace</div>
+        <div id="ra1rows"></div>
+        <div class="atotal"><div class="abar"><div class="afill" id="ra1fill" style="width:0%"></div></div><span id="ra1tot" style="font-size:12px;font-family:monospace;color:var(--tx2)">0 %</span></div>
+        <div class="warn" id="rw1">⚠ Musí být 100 %</div>
+      </div>
+      <div>
+        <div class="ctitle" style="margin-bottom:.5rem">🚀 Cíl 2 — alokace</div>
+        <div id="ra2rows"></div>
+        <div class="atotal"><div class="abar"><div class="afill" id="ra2fill" style="width:0%"></div></div><span id="ra2tot" style="font-size:12px;font-family:monospace;color:var(--tx2)">0 %</span></div>
+        <div class="warn" id="rw2">⚠ Musí být 100 %</div>
+      </div>
+    </div>
+    <div class="brow" style="margin-top:1.2rem">
+      <button class="btn btnp" onclick="confirmRealloc()" style="flex:1">✓ Potvrdit a spustit rok</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ NOVINY ══════════ -->
+<div class="nov" id="nov">
+  <div class="nov-inner" id="nov-inner"></div>
+  <div class="nov-btn">
+    <button class="btn btnp" onclick="closeNewspaper()" style="min-width:200px;font-size:15px">Číst dále → Další rok</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// ASSETS
+// ══════════════════════════════════
+const ASSETS=[
+  {id:'etf_world',  lbl:'World ETF (akcie)',  color:'#3b82f6',sh:'World ETF'},
+  {id:'sp500',      lbl:'S&P 500 ETF',        color:'#10b981',sh:'S&P 500'},
+  {id:'reit',       lbl:'REIT ETF (nemov.)',  color:'#e879f9',sh:'REIT ETF'},
+  {id:'commodities',lbl:'Komodity ETF',       color:'#14b8a6',sh:'Komodity'},
+  {id:'bonds',      lbl:'Dluhopisy ETF',      color:'#8b5cf6',sh:'Dluhopisy'},
+  {id:'savings',    lbl:'Spořicí účet (3 %)', color:'#f59e0b',sh:'Spoř. účet'},
+  {id:'cash',       lbl:'Hotovost',           color:'#6b7280',sh:'Hotovost'},
+];
+
+// ══════════════════════════════════
+// ROUNDS — hidden from players
+// ══════════════════════════════════
+const ROUNDS=[
+  {l:'Rok 1', r:{etf_world:9.2, sp500:11.5,reit:8.1, commodities:5.2, bonds:3.8, savings:3,cash:0}},
+  {l:'Rok 2', r:{etf_world:7.8, sp500:9.2, reit:6.4, commodities:3.8, bonds:2.9, savings:3,cash:0}},
+  {l:'Rok 3', r:{etf_world:4.1, sp500:5.3, reit:1.8, commodities:8.9, bonds:-4.2,savings:3,cash:0}},
+  {l:'Rok 4', r:{etf_world:14.2,sp500:16.8,reit:11.2,commodities:6.3, bonds:4.1, savings:3,cash:0}},
+  {l:'Rok 5', r:{etf_world:12.6,sp500:14.3,reit:9.8, commodities:4.1, bonds:3.7, savings:3,cash:0}},
+  {l:'Rok 6', r:{etf_world:10.4,sp500:12.1,reit:8.6, commodities:2.9, bonds:3.2, savings:3,cash:0}},
+  {l:'Rok 7', r:{etf_world:8.9, sp500:10.7,reit:7.3, commodities:1.8, bonds:2.8, savings:3,cash:0}},
+  {l:'Rok 8', r:{etf_world:-3.2,sp500:-4.1,reit:-5.8,commodities:9.2, bonds:5.2, savings:3,cash:0}},
+  {l:'Rok 9', r:{etf_world:2.1, sp500:3.4, reit:0.9, commodities:6.1, bonds:4.8, savings:3,cash:0}},
+  {l:'Rok 10',r:{etf_world:-18.4,sp500:-22.1,reit:-14.2,commodities:12.4,bonds:7.8,savings:3,cash:0},crash:true},
+];
+
+// News with 50/50 reliable/misleading outlook
+const NEWS=[
+  {sec:'GLOBÁLNÍ TRHY',h:'Akciové trhy nastartovaly — investoři slaví silné výsledky',sf:'Globální indexy zaznamenaly výrazné zisky. Realitní fondy a komodity v zelených číslech.',body:'Optimismus pramenil z oživení světové ekonomiky. Centrální banky udržovaly příznivé sazby. Dluhopisy rostly mírně, spořicí účty stabilně. Hotovost jako vždy bez výnosu — inflace ji tiše okrádá.',img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80&fit=crop',alt:'Burza — zelené obrazovky',out:'Analytici očekávají pokračující růst, avšak mírně umírněnější tempo. Pozornost si zaslouží dluhopisy jako doplněk portfolia.'},
+  {sec:'EKONOMIKA',h:'Druhý rok expanze: trhy rostou dál, tempo mírně klesá',sf:'Globální akcie připsaly solidní zisky. Analytici hovoří o zdravé konsolidaci.',body:'Světové akcie pokračovaly ve vzestupném trendu. Ekonomové varují, že cykly netrvají věčně. Komoditní ETF si vedlo solidně.',img:'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80&fit=crop',alt:'Analytik sledující finanční grafy',out:'Odborníci jsou optimisticky naladěni na dluhopisy — jejich výnos přiláká nové investory. Akcie si udrží mírný růst.'},
+  {sec:'ÚROKOVÉ SAZBY',h:'Centrální banky zvýšily sazby — dluhopisy se propadly',sf:'Nečekaný krok centrálních bank způsobil prudký pokles dluhopisů. Komodity výrazně vzrostly.',body:'Rozhodnutí Fedu a ECB překvapilo trhy. Výprodej dluhopisů byl prudký. Komodity — inflační pojistka — profitovaly.',img:'https://images.unsplash.com/photo-1444653614773-995cb1ef9efa?w=800&q=80&fit=crop',alt:'Budova centrální banky',out:'Po turbulentním roce ekonomika dává signály silného oživení. Akciové trhy by mohly výrazně zrychlit.'},
+  {sec:'GLOBÁLNÍ RŮST',h:'Světová ekonomika zrychluje — akcioví investoři sklízejí bohatou úrodu',sf:'Nejsilnější rok za dlouho. Globální indexy hlásí dvojciferné zisky.',body:'Konjunktura v USA, Evropě i Asii se sladila. Zisky firem překonaly očekávání. Dluhopisy mírně vzrostly.',img:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80&fit=crop',alt:'Mrakodrapy — symbol ekonomického boomu',out:'Analytici varují před možným přehřátím. Doporučujeme zvážit přesun části prostředků do dluhopisů jako pojistky.'},
+  {sec:'INVESTICE',h:'Pátý rok v řadě na pozitivním teritoriu',sf:'Všechna riziková aktiva generují výnosy. Diverzifikovaná portfolia v skvělé formě.',body:'Páté pozitivní kolo — valuace napnuté, ale výdělky firem ospravedlňují ceny. Nejdůležitější: reálné XIRR po odečtení inflace.',img:'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80&fit=crop',alt:'Investor s grafem portfolia',out:'Trhy vypadají zdravě, fundamenty podporují další solidní rok. Akcie i REIT mohou pokračovat v dobré formě.'},
+  {sec:'FINANČNÍ TRHY',h:'Solidní výnosy — dluhopisy oblíbené, REITs v kurzu',sf:'Šestý rok přinesl vyrovnané výnosy. Portfolia vyvážená napříč aktivy si vedou skvěle.',body:'Trhy v pozdní fázi cyklu, stále zdravé výnosy. Dluhopisy po šoku stabilizovány. REIT fondy těžily z rostoucích nájmů.',img:'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80&fit=crop',alt:'Obchodník na burze',out:'Technické indikátory naznačují možnou korekci. Zvažte přesun části do bezpečnějších aktiv — dluhopisy, spořicí účet.'},
+  {sec:'HOSPODÁŘSKÝ VÝHLED',h:'Trhy zvolňují — první varovné signály na obzoru',sf:'Sedmý rok byl stále zelený, ale analytici upozorňují na zpomalení.',body:'Globální ekonomika stále rostla, signály zpomalení zřetelnější. Mnozí investoři přemýšlejí o rebalancování.',img:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80&fit=crop',alt:'Varovné signály na trzích',out:'Pozor na příští rok — ekonomické modely poukazují na zvýšené riziko korekce. Dluhopisy a komodity jako pojistka.'},
+  {sec:'KOREKCE TRHŮ',h:'Korekce přišla — akcie a REIT v červených číslech',sf:'Po letech růstu přišla výrazná korekce. Dluhopisy vzrostly — klasický přístav.',body:'Kombinace inflace a geopolitiky přiměla investory ke snížení rizika. Komodity profitovaly. Lekce roku: diverzifikace je záchranný pás.',img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80&fit=crop&sat=-100',alt:'Červené obrazovky na burze',out:'Po výprodejích bývají trhy historicky silné. Analytici doporučují nakupovat akcie za nízké ceny.'},
+  {sec:'OŽIVENÍ',h:'Trhy se sbírají — opatrný optimismus se vrací',sf:'Devátý rok přinesl částečné oživení. Dluhopisy silné. Komodity táhnou nahoru.',body:'Investoři se opatrně vraceli. Akcie odrazily ode dna. Příchozí kolo bude existenčním testem portfolia.',img:'https://images.unsplash.com/photo-1540390769625-2fc3f8b1d50c?w=800&q=80&fit=crop',alt:'Zelené výhonky — symbol oživení',out:'Oživení nabírá sílu. Ekonomové jsou optimisticky naladěni — akciové trhy by mohly dosáhnout nových maxim.'},
+  {sec:'KRACH TRHŮ',h:'KRACH: Globální trhy se zhroutily — nejhorší rok dekády',sf:'Historický propad! Akcie a REIT prudce padají. Dluhopisy a komodity bránily totální destrukci.',body:'Recesní obavy, bankovní turbulence a geopolitika spustily masivní výprodej. Konzervativní alokace ztráty výrazně omezila. Klíčová lekce: rebalancování před krachem rozhoduje.',img:'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80&fit=crop&sat=-80',alt:'Dramatický propad grafů',out:'',crash:true},
+];
+
+// ══════════════════════════════════
+// GOAL IMAGES — real photos from Unsplash
+// Unsplash Source: free, no API key, ethically licensed
+// ══════════════════════════════════
+function getUnsplashQuery(name){
+  const n=(name||'').toLowerCase();
+  if(n.match(/byt|dům|house|nemovit|flat|apart|vlastní/)) return 'cozy house night architecture';
+  if(n.match(/japan|tokio|tokyo|kyoto/)) return 'japan fuji sakura travel';
+  if(n.match(/dovol|výlet|trip|cestov|plá|beach|moře/)) return 'travel adventure scenic';
+  if(n.match(/hory|skiing|lyž|alp|trek|hora/)) return 'mountain adventure sunset';
+  if(n.match(/auto|car|tesla|porsch|bmw|motor|vozidlo/)) return 'luxury car road night';
+  if(n.match(/škol|univ|studie|vzděl|diplom|mba|kurz/)) return 'university library study';
+  if(n.match(/svat|prsten|partner|rodina|dítě|baby|lásk/)) return 'family love nature sunset';
+  if(n.match(/kavárna|café|coffee|restaur|bistro/)) return 'cozy cafe coffee';
+  if(n.match(/sport|fitness|gym|běh|cykl|plav/)) return 'sport fitness outdoor';
+  if(n.match(/hudba|music|kytara|guitar|piano|band/)) return 'music concert instruments';
+  if(n.match(/podnik|startup|firma|business/)) return 'business startup success';
+  if(n.match(/zahrada|garden|příroda|nature|les|forest/)) return 'garden nature serene';
+  // Generic: use first 3 meaningful words of the goal name
+  const words=name.replace(/[^a-zA-ZÀ-ž\s]/g,'').trim().split(/\s+/).slice(0,3).join(' ');
+  return words||'dream landscape nature';
+}
+
+function setGoalImage(imgEl, name, ca, cb){
+  const query=encodeURIComponent(getUnsplashQuery(name));
+  // Unsplash Source — CC0/free, no API key required
+  imgEl.src=`https://source.unsplash.com/400x220/?${query}`;
+  imgEl.style.cssText='width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.88) saturate(1.1)';
+  imgEl.onerror=()=>{
+    // Fallback: Ghibli SVG
+    const parent=imgEl.parentElement;
+    if(parent) parent.innerHTML=dreamSVG(name,ca,cb);
+  };
+}
+
+// ══════════════════════════════════
+// DREAM SVG ILLUSTRATIONS — Ghibli style (fallback when photo unavailable)
+// Bohaté, detailní ilustrace ve stylu studia Ghibli:
+// vzdušná světla, oblaka, příroda, snové perspektivy, teplé barvy
+// ══════════════════════════════════
+function dreamSVG(name, ca, cb){
+  const n=(name||'').toLowerCase();
+  let svg;
+
+  if(n.match(/byt|dům|house|nemovit|flat|apart|vlastní/)){
+    // Ghibli: útulný dům na kopci za soumraku, světlo z oken, stromy, Totoro styl
+    svg=`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <linearGradient id="sky-h" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0d1b3e"/><stop offset="55%" stop-color="#1a2f5a"/>
+          <stop offset="100%" stop-color="#2d4a6e"/>
+        </linearGradient>
+        <linearGradient id="hill-h" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1e3a22"/><stop offset="100%" stop-color="#0f2211"/>
+        </linearGradient>
+        <radialGradient id="moon-h" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fffbe8"/><stop offset="70%" stop-color="#f5e88a"/><stop offset="100%" stop-color="#e8c94a" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="glow-h"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="softglow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- Sky -->
+      <rect width="400" height="220" fill="url(#sky-h)"/>
+      <!-- Moon glow -->
+      <circle cx="310" cy="48" r="40" fill="#f5e88a" opacity=".08"/>
+      <circle cx="310" cy="48" r="22" fill="url(#moon-h)" filter="url(#softglow)"/>
+      <circle cx="310" cy="48" r="20" fill="#fffbe8"/>
+      <!-- Moon craters -->
+      <circle cx="304" cy="44" r="3" fill="#e8d870" opacity=".5"/>
+      <circle cx="316" cy="52" r="2" fill="#e8d870" opacity=".4"/>
+      <!-- Stars -->
+      <g opacity=".8">
+        <circle cx="30" cy="18" r="1.2" fill="white"/><circle cx="65" cy="10" r=".9" fill="white"/><circle cx="110" cy="22" r="1" fill="white"/>
+        <circle cx="155" cy="8" r=".8" fill="white"/><circle cx="200" cy="16" r="1.1" fill="white"/><circle cx="245" cy="6" r=".7" fill="white"/>
+        <circle cx="355" cy="15" r="1" fill="white"/><circle cx="380" cy="28" r=".8" fill="white"/>
+        <circle cx="18" cy="42" r=".7" fill="white"/><circle cx="88" cy="36" r=".9" fill="white"/>
+        <circle cx="170" cy="32" r=".6" fill="white"/><circle cx="260" cy="40" r=".8" fill="white"/>
+      </g>
+      <!-- Fireflies / sparkles -->
+      <circle cx="140" cy="130" r="1.5" fill="#fffb80" opacity=".7" filter="url(#glow-h)"/>
+      <circle cx="80" cy="155" r="1.2" fill="#fffb80" opacity=".6" filter="url(#glow-h)"/>
+      <circle cx="330" cy="140" r="1.3" fill="#fffb80" opacity=".65" filter="url(#glow-h)"/>
+      <circle cx="260" cy="125" r="1" fill="#fffb80" opacity=".5" filter="url(#glow-h)"/>
+      <!-- Rolling hills -->
+      <path d="M0,160 Q60,120 130,145 Q200,168 270,140 Q340,112 400,138 L400,220 L0,220 Z" fill="url(#hill-h)"/>
+      <path d="M0,175 Q80,155 160,170 Q240,185 320,165 Q360,155 400,162 L400,220 L0,220 Z" fill="#0a1a0d" opacity=".85"/>
+      <!-- Big camphor tree (Totoro tree) -->
+      <ellipse cx="68" cy="118" rx="32" ry="45" fill="#14341a" opacity=".9"/>
+      <ellipse cx="68" cy="105" rx="24" ry="35" fill="#1a4020" opacity=".85"/>
+      <ellipse cx="75" cy="96" rx="18" ry="28" fill="#1e4a24"/>
+      <rect x="64" y="158" width="8" height="20" fill="#0d2010"/>
+      <!-- Small tree right -->
+      <ellipse cx="340" cy="130" rx="20" ry="30" fill="#14341a"/>
+      <ellipse cx="340" cy="120" rx="15" ry="22" fill="#1a4020"/>
+      <rect x="337" y="155" width="6" height="15" fill="#0d2010"/>
+      <!-- House body -->
+      <rect x="148" y="118" width="104" height="68" rx="3" fill="#f0e6d0"/>
+      <!-- Roof -->
+      <polygon points="138,122 200,78 262,122" fill="#8b3a2a"/>
+      <polygon points="142,122 200,81 258,122" fill="#a84535"/>
+      <!-- Roof ridge -->
+      <line x1="200" y1="78" x2="200" y2="82" stroke="#6b2518" stroke-width="3"/>
+      <!-- Chimney -->
+      <rect x="220" y="85" width="12" height="22" fill="#7a3522"/>
+      <rect x="218" y="83" width="16" height="5" rx="1" fill="#6b2518"/>
+      <!-- Smoke wisps -->
+      <path d="M226,83 Q229,72 224,63 Q220,55 225,47" stroke="#ccc" stroke-width="2" fill="none" opacity=".4" stroke-linecap="round"/>
+      <path d="M229,83 Q234,70 229,60 Q225,52 231,44" stroke="#ccc" stroke-width="1.5" fill="none" opacity=".3" stroke-linecap="round"/>
+      <!-- Windows with warm light -->
+      <rect x="158" y="132" width="22" height="18" rx="2" fill="#ffdd88"/>
+      <rect x="220" y="132" width="22" height="18" rx="2" fill="#ffdd88"/>
+      <line x1="169" y1="132" x2="169" y2="150" stroke="#c8a84a" stroke-width="1" opacity=".6"/>
+      <line x1="158" y1="141" x2="180" y2="141" stroke="#c8a84a" stroke-width="1" opacity=".6"/>
+      <line x1="231" y1="132" x2="231" y2="150" stroke="#c8a84a" stroke-width="1" opacity=".6"/>
+      <line x1="220" y1="141" x2="242" y2="141" stroke="#c8a84a" stroke-width="1" opacity=".6"/>
+      <!-- Window glow -->
+      <rect x="158" y="132" width="22" height="18" rx="2" fill="#ffaa00" opacity=".15" filter="url(#softglow)"/>
+      <rect x="220" y="132" width="22" height="18" rx="2" fill="#ffaa00" opacity=".15" filter="url(#softglow)"/>
+      <!-- Door -->
+      <rect x="186" y="155" width="28" height="31" rx="3" fill="#5c2d1a"/>
+      <rect x="188" y="157" width="12" height="27" rx="2" fill="#6b3520"/>
+      <rect x="201" y="157" width="11" height="27" rx="2" fill="#6b3520"/>
+      <circle cx="200" cy="173" r="2" fill="#c8954a"/>
+      <!-- Path to house -->
+      <path d="M165,186 Q190,192 200,186 Q210,192 235,186 L240,220 L160,220 Z" fill="#d4b896" opacity=".4"/>
+      <!-- Flowers along path -->
+      <circle cx="168" cy="187" r="3" fill="#f0a0c0" opacity=".8"/>
+      <circle cx="232" cy="187" r="3" fill="#f0a0c0" opacity=".8"/>
+      <circle cx="162" cy="182" r="2" fill="#ffd080" opacity=".7"/>
+      <circle cx="238" cy="182" r="2" fill="#ffd080" opacity=".7"/>
+      <!-- Caption -->
+      <text x="200" y="214" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="white" opacity=".4" font-style="italic">váš sen</text>
+    </svg>`;
+
+  } else if(n.match(/japan|dovol|výlet|trip|ces|beach|plá|hory|moře|svět/)){
+    // Ghibli: Japonsko — hora Fuji při úsvitu, Torii brána ve vodě (Miyajima), vlnky, sakury
+    svg=`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <linearGradient id="sky-j" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a0a2e"/><stop offset="35%" stop-color="#3d1a5e"/>
+          <stop offset="65%" stop-color="#c0507a"/><stop offset="100%" stop-color="#f0a060"/>
+        </linearGradient>
+        <linearGradient id="water-j" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c0507a" stop-opacity=".6"/><stop offset="100%" stop-color="#1a0a2e" stop-opacity=".8"/>
+        </linearGradient>
+        <filter id="glow-j"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- Sky gradient — dawn -->
+      <rect width="400" height="220" fill="url(#sky-j)"/>
+      <!-- Sun rising -->
+      <circle cx="200" cy="110" r="35" fill="#ffdd55" opacity=".25" filter="url(#glow-j)"/>
+      <circle cx="200" cy="110" r="22" fill="#ffcc33" opacity=".5" filter="url(#glow-j)"/>
+      <circle cx="200" cy="110" r="14" fill="#ffee88"/>
+      <!-- Stars still visible -->
+      <circle cx="40" cy="20" r="1.2" fill="white" opacity=".6"/><circle cx="80" cy="12" r=".8" fill="white" opacity=".5"/>
+      <circle cx="130" cy="25" r=".9" fill="white" opacity=".4"/><circle cx="350" cy="18" r="1" fill="white" opacity=".5"/>
+      <circle cx="320" cy="8" r=".7" fill="white" opacity=".4"/>
+      <!-- Mount Fuji -->
+      <polygon points="200,30 305,150 95,150" fill="white" opacity=".92"/>
+      <polygon points="200,30 230,80 170,80" fill="white"/>
+      <!-- Fuji snow cap shading -->
+      <polygon points="200,30 240,88 160,88" fill="#e8eef8" opacity=".5"/>
+      <polygon points="200,30 218,62 182,62" fill="white"/>
+      <!-- Fuji body -->
+      <polygon points="200,68 305,150 95,150" fill="#9baec8" opacity=".6"/>
+      <polygon points="200,68 270,150 130,150" fill="#7a94b0" opacity=".5"/>
+      <!-- Water / lake reflection -->
+      <rect x="0" y="148" width="400" height="72" fill="url(#water-j)"/>
+      <!-- Water ripples -->
+      <ellipse cx="200" cy="155" rx="80" ry="6" stroke="#f0b0a0" stroke-width="1" fill="none" opacity=".4"/>
+      <ellipse cx="200" cy="162" rx="110" ry="7" stroke="#f0b0a0" stroke-width="1" fill="none" opacity=".3"/>
+      <ellipse cx="200" cy="170" rx="140" ry="8" stroke="#f0b0a0" stroke-width="1" fill="none" opacity=".25"/>
+      <!-- Fuji reflection in water -->
+      <polygon points="200,152 270,210 130,210" fill="#9baec8" opacity=".2"/>
+      <!-- Torii gate -->
+      <rect x="174" y="110" width="8" height="45" fill="#cc3300" opacity=".9"/>
+      <rect x="218" y="110" width="8" height="45" fill="#cc3300" opacity=".9"/>
+      <rect x="167" y="107" width="66" height="8" rx="3" fill="#dd4400"/>
+      <rect x="171" y="119" width="58" height="5" rx="2" fill="#cc3300" opacity=".7"/>
+      <!-- Torii reflection -->
+      <rect x="174" y="155" width="8" height="30" fill="#cc3300" opacity=".25"/>
+      <rect x="218" y="155" width="8" height="30" fill="#cc3300" opacity=".25"/>
+      <!-- Sakura trees left -->
+      <rect x="50" y="130" width="6" height="25" fill="#5a3020"/>
+      <ellipse cx="53" cy="122" rx="18" ry="15" fill="#e87098" opacity=".8"/>
+      <ellipse cx="46" cy="128" rx="12" ry="10" fill="#f090b0" opacity=".7"/>
+      <ellipse cx="62" cy="126" rx="10" ry="9" fill="#e87098" opacity=".6"/>
+      <!-- Sakura petals falling -->
+      <ellipse cx="75" cy="108" rx="3" ry="2" fill="#f0b0c8" opacity=".7" transform="rotate(-30,75,108)"/>
+      <ellipse cx="30" cy="140" rx="2.5" ry="1.5" fill="#f0b0c8" opacity=".6" transform="rotate(20,30,140)"/>
+      <ellipse cx="110" cy="120" rx="2" ry="1.5" fill="#f0b0c8" opacity=".5" transform="rotate(-45,110,120)"/>
+      <!-- Sakura trees right -->
+      <rect x="344" y="130" width="6" height="25" fill="#5a3020"/>
+      <ellipse cx="347" cy="122" rx="18" ry="15" fill="#e87098" opacity=".8"/>
+      <ellipse cx="340" cy="128" rx="12" ry="10" fill="#f090b0" opacity=".7"/>
+      <ellipse cx="356" cy="126" rx="10" ry="9" fill="#e87098" opacity=".6"/>
+      <!-- Petals right -->
+      <ellipse cx="370" cy="115" rx="3" ry="2" fill="#f0b0c8" opacity=".65" transform="rotate(15,370,115)"/>
+      <ellipse cx="325" cy="142" rx="2.5" ry="1.5" fill="#f0b0c8" opacity=".55" transform="rotate(-25,325,142)"/>
+      <!-- Small boat on water -->
+      <path d="M80,175 Q100,168 120,175 L115,183 L85,183 Z" fill="#5a3020" opacity=".7"/>
+      <line x1="100" y1="168" x2="100" y2="155" stroke="#5a3020" stroke-width="1.5" opacity=".6"/>
+      <path d="M100,155 Q118,160 112,168" fill="#e8d0a0" opacity=".5"/>
+      <text x="200" y="214" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="white" opacity=".5" font-style="italic">váš sen</text>
+    </svg>`;
+
+  } else if(n.match(/auto|car|tesla|porsch|bmw|motor|vozidlo|moto/)){
+    // Ghibli: auto na silnici v noci — světla jako Totoro bus, hvězdná obloha, venkovská cesta
+    svg=`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <linearGradient id="sky-c" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#04091a"/><stop offset="100%" stop-color="#0d1f3a"/>
+        </linearGradient>
+        <linearGradient id="road-c" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a1a1a"/><stop offset="100%" stop-color="#2a2a2a"/>
+        </linearGradient>
+        <radialGradient id="beam-l" cx="0%" cy="50%" r="100%">
+          <stop offset="0%" stop-color="#fffbe0" stop-opacity=".8"/><stop offset="100%" stop-color="#fffbe0" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="beam-r" cx="100%" cy="50%" r="100%">
+          <stop offset="0%" stop-color="#fffbe0" stop-opacity=".8"/><stop offset="100%" stop-color="#fffbe0" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="glow-c"><feGaussianBlur stdDeviation="5"/></filter>
+        <filter id="sglow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- Sky -->
+      <rect width="400" height="220" fill="url(#sky-c)"/>
+      <!-- Milky way band -->
+      <ellipse cx="200" cy="60" rx="200" ry="30" fill="white" opacity=".03"/>
+      <!-- Stars — dense field -->
+      <g opacity=".85">
+        <circle cx="15" cy="12" r="1.2" fill="white"/><circle cx="40" cy="8" r=".9" fill="white"/><circle cx="70" cy="18" r="1" fill="white"/>
+        <circle cx="100" cy="6" r=".7" fill="white"/><circle cx="130" cy="22" r="1.1" fill="white"/><circle cx="160" cy="10" r=".8" fill="white"/>
+        <circle cx="195" cy="4" r="1.3" fill="white"/><circle cx="225" cy="14" r=".7" fill="white"/><circle cx="255" cy="8" r="1" fill="white"/>
+        <circle cx="285" cy="20" r=".9" fill="white"/><circle cx="315" cy="5" r="1.1" fill="white"/><circle cx="345" cy="16" r=".8" fill="white"/>
+        <circle cx="375" cy="9" r="1" fill="white"/><circle cx="385" cy="24" r=".7" fill="white"/>
+        <circle cx="25" cy="34" r=".8" fill="white"/><circle cx="58" cy="40" r=".6" fill="white"/><circle cx="92" cy="30" r=".9" fill="white"/>
+        <circle cx="145" cy="38" r=".7" fill="white"/><circle cx="180" cy="28" r="1" fill="white"/><circle cx="215" cy="42" r=".6" fill="white"/>
+        <circle cx="248" cy="32" r=".8" fill="white"/><circle cx="290" cy="44" r=".9" fill="white"/><circle cx="330" cy="36" r=".7" fill="white"/>
+        <circle cx="365" cy="42" r=".8" fill="white"/><circle cx="395" cy="30" r="1" fill="white"/>
+      </g>
+      <!-- Shooting star -->
+      <line x1="280" y1="25" x2="310" y2="38" stroke="white" stroke-width="1.5" opacity=".6" stroke-linecap="round"/>
+      <!-- Rolling hills silhouette -->
+      <path d="M0,130 Q50,100 120,118 Q180,132 240,108 Q300,85 360,112 Q385,122 400,115 L400,220 L0,220Z" fill="#0a1f0a"/>
+      <path d="M0,142 Q70,128 150,138 Q230,148 310,132 Q360,122 400,135 L400,220 L0,220Z" fill="#060f06"/>
+      <!-- Road -->
+      <path d="M0,190 Q200,170 400,185 L400,220 L0,220Z" fill="url(#road-c)"/>
+      <!-- Road center dashes -->
+      <line x1="60" y1="205" x2="100" y2="203" stroke="#888" stroke-width="2" stroke-dasharray="20,15" opacity=".5"/>
+      <line x1="160" y1="201" x2="240" y2="200" stroke="#888" stroke-width="2" stroke-dasharray="20,15" opacity=".5"/>
+      <line x1="300" y1="202" x2="380" y2="204" stroke="#888" stroke-width="2" stroke-dasharray="20,15" opacity=".5"/>
+      <!-- Car body — sleek silhouette -->
+      <rect x="118" y="168" width="164" height="30" rx="6" fill="#c8d8e8"/>
+      <!-- Cabin -->
+      <path d="M148,168 Q165,142 220,140 Q260,140 270,168 Z" fill="#b0c4d8"/>
+      <!-- Windows -->
+      <path d="M156,167 Q168,148 205,147 L205,167Z" fill="#7fb0d0" opacity=".85"/>
+      <path d="M207,167 L207,147 Q240,147 258,167Z" fill="#7fb0d0" opacity=".85"/>
+      <!-- Window frames -->
+      <line x1="205" y1="147" x2="205" y2="167" stroke="#5080a0" stroke-width="2"/>
+      <!-- Car details -->
+      <rect x="118" y="188" width="164" height="10" rx="3" fill="#a0b4c8"/>
+      <!-- Wheels -->
+      <circle cx="158" cy="198" r="20" fill="#1a1a1a"/><circle cx="158" cy="198" r="12" fill="#303030"/><circle cx="158" cy="198" r="5" fill="#888"/>
+      <circle cx="242" cy="198" r="20" fill="#1a1a1a"/><circle cx="242" cy="198" r="12" fill="#303030"/><circle cx="242" cy="198" r="5" fill="#888"/>
+      <!-- Headlights glow -->
+      <ellipse cx="280" cy="180" rx="60" ry="18" fill="url(#beam-l)" opacity=".55"/>
+      <circle cx="280" cy="180" r="6" fill="#fffbe0" filter="url(#sglow)"/>
+      <circle cx="280" cy="180" r="3" fill="white"/>
+      <!-- Tail lights -->
+      <circle cx="120" cy="180" r="6" fill="#ff2200" opacity=".8" filter="url(#sglow)"/>
+      <circle cx="120" cy="180" r="3" fill="#ff4400"/>
+      <!-- Reflections on road -->
+      <ellipse cx="200" cy="215" rx="80" ry="4" fill="#c8d8e8" opacity=".1"/>
+      <!-- Trees silhouette -->
+      <rect x="20" y="120" width="5" height="30" fill="#060f06"/>
+      <ellipse cx="22" cy="112" rx="12" ry="18" fill="#0a1f0a"/>
+      <rect x="360" y="118" width="5" height="28" fill="#060f06"/>
+      <ellipse cx="362" cy="110" rx="11" ry="16" fill="#0a1f0a"/>
+      <text x="200" y="214" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="white" opacity=".35" font-style="italic">váš sen</text>
+    </svg>`;
+
+  } else if(n.match(/škol|univ|studie|vzděl|diplom|mba|kurz|vědě/)){
+    // Ghibli: kouzelná knihovna / studovna v noci — svíčky, plující knihy, spirálové schody
+    svg=`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <linearGradient id="lib-sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#080c1a"/><stop offset="100%" stop-color="#141c38"/>
+        </linearGradient>
+        <radialGradient id="candle-g" cx="50%" cy="0%" r="100%">
+          <stop offset="0%" stop-color="#ffd060" stop-opacity=".9"/><stop offset="100%" stop-color="#ffd060" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="cg"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="400" height="220" fill="url(#lib-sky)"/>
+      <!-- Large circular window — full moon through it -->
+      <circle cx="200" cy="70" r="58" fill="#0d1530" stroke="#4a5a80" stroke-width="3"/>
+      <circle cx="200" cy="70" r="54" fill="#101830"/>
+      <!-- Moon visible through window -->
+      <circle cx="200" cy="70" r="28" fill="#fffbe8" opacity=".92"/>
+      <circle cx="192" cy="62" r="5" fill="#f0e870" opacity=".4"/>
+      <circle cx="208" cy="76" r="3" fill="#f0e870" opacity=".3"/>
+      <!-- Window cross bars -->
+      <line x1="200" y1="16" x2="200" y2="124" stroke="#4a5a80" stroke-width="2.5"/>
+      <line x1="146" y1="70" x2="254" y2="70" stroke="#4a5a80" stroke-width="2.5"/>
+      <ellipse cx="200" cy="70" rx="28" ry="28" stroke="#4a5a80" stroke-width="1.5" fill="none" opacity=".5"/>
+      <!-- Bookshelf left -->
+      <rect x="0" y="40" width="18" height="180" fill="#2a1a0a"/>
+      <rect x="2" y="50" width="14" height="8" rx="1" fill="#8b2020"/>
+      <rect x="2" y="62" width="14" height="10" rx="1" fill="#205060"/>
+      <rect x="2" y="76" width="14" height="7" rx="1" fill="#4a7a20"/>
+      <rect x="2" y="87" width="14" height="9" rx="1" fill="#6a3080"/>
+      <rect x="2" y="100" width="14" height="8" rx="1" fill="#803020"/>
+      <rect x="2" y="112" width="14" height="10" rx="1" fill="#205080"/>
+      <rect x="2" y="126" width="14" height="7" rx="1" fill="#508030"/>
+      <rect x="2" y="137" width="14" height="9" rx="1" fill="#602040"/>
+      <!-- Bookshelf right -->
+      <rect x="382" y="40" width="18" height="180" fill="#2a1a0a"/>
+      <rect x="384" y="50" width="14" height="8" rx="1" fill="#205060"/>
+      <rect x="384" y="62" width="14" height="10" rx="1" fill="#8b2020"/>
+      <rect x="384" y="76" width="14" height="7" rx="1" fill="#6a3080"/>
+      <rect x="384" y="87" width="14" height="9" rx="1" fill="#4a7a20"/>
+      <rect x="384" y="100" width="14" height="8" rx="1" fill="#803020"/>
+      <rect x="384" y="112" width="14" height="10" rx="1" fill="#508030"/>
+      <!-- Floating books (magic!) -->
+      <g transform="rotate(-12,90,95)"><rect x="75" y="88" width="30" height="20" rx="2" fill="#8b2020"/><rect x="75" y="88" width="4" height="20" fill="#a03030"/><line x1="80" y1="90" x2="80" y2="106" stroke="#c04040" stroke-width=".5"/></g>
+      <g transform="rotate(8,300,80)"><rect x="285" y="72" width="28" height="18" rx="2" fill="#205060"/><rect x="285" y="72" width="4" height="18" fill="#306080"/></g>
+      <g transform="rotate(-6,150,50)"><rect x="135" y="43" width="32" height="20" rx="2" fill="#4a7a20"/><rect x="135" y="43" width="4" height="20" fill="#5a9025"/></g>
+      <g transform="rotate(15,260,55)"><rect x="245" y="47" width="30" height="19" rx="2" fill="#6a3080"/><rect x="245" y="47" width="4" height="19" fill="#7a40a0"/></g>
+      <!-- Magical sparkle trails from books -->
+      <circle cx="92" cy="84" r="1.5" fill="#ffd060" opacity=".7" filter="url(#cg)"/>
+      <circle cx="86" cy="78" r="1" fill="#ffd060" opacity=".5"/>
+      <circle cx="80" cy="72" r=".8" fill="#ffd060" opacity=".35"/>
+      <circle cx="155" cy="40" r="1.5" fill="#a0d060" opacity=".7" filter="url(#cg)"/>
+      <circle cx="148" cy="34" r="1" fill="#a0d060" opacity=".5"/>
+      <circle cx="300" cy="76" r="1.5" fill="#60b0d0" opacity=".7" filter="url(#cg)"/>
+      <!-- Desk with candle -->
+      <rect x="120" y="162" width="160" height="12" rx="3" fill="#3a2010"/>
+      <rect x="130" y="140" width="140" height="24" rx="2" fill="#4a2a14"/>
+      <!-- Open book on desk -->
+      <path d="M155,140 Q200,135 200,140 L200,162 Q155,165 155,162 Z" fill="#f5f0e8"/>
+      <path d="M200,140 Q245,135 245,140 L245,162 Q200,165 200,162 Z" fill="#f5f0e8"/>
+      <line x1="200" y1="140" x2="200" y2="162" stroke="#c8b88a" stroke-width="1"/>
+      <!-- Book text lines -->
+      <line x1="162" y1="146" x2="194" y2="145" stroke="#888" stroke-width=".8" opacity=".5"/>
+      <line x1="162" y1="150" x2="194" y2="149" stroke="#888" stroke-width=".8" opacity=".5"/>
+      <line x1="162" y1="154" x2="194" y2="153" stroke="#888" stroke-width=".8" opacity=".5"/>
+      <line x1="206" y1="146" x2="238" y2="145" stroke="#888" stroke-width=".8" opacity=".5"/>
+      <line x1="206" y1="150" x2="238" y2="149" stroke="#888" stroke-width=".8" opacity=".5"/>
+      <!-- Candle -->
+      <rect x="257" y="133" width="8" height="20" rx="1" fill="#f5f0d8"/>
+      <ellipse cx="261" cy="133" rx="4" ry="2" fill="#e8e0c0"/>
+      <path d="M261,133 Q264,126 261,122 Q258,126 261,133 Z" fill="#ffa030"/>
+      <circle cx="261" cy="123" r="3" fill="#ffd060" opacity=".8" filter="url(#cg)"/>
+      <!-- Candle light on desk -->
+      <ellipse cx="261" cy="155" rx="30" ry="6" fill="#ffd060" opacity=".08" filter="url(#cg)"/>
+      <!-- Stars through window -->
+      <circle cx="178" cy="52" r=".8" fill="white" opacity=".5"/>
+      <circle cx="222" cy="48" r=".7" fill="white" opacity=".4"/>
+      <text x="200" y="214" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="white" opacity=".4" font-style="italic">váš sen</text>
+    </svg>`;
+
+  } else if(n.match(/svat|prsten|partner|rodina|dítě|baby|lásk|miluje/)){
+    // Ghibli: dvě postavy na louce za soumraku, lucerny letí, jako Spirited Away nebo Howl
+    svg=`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <linearGradient id="sky-l" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0d0820"/><stop offset="40%" stop-color="#2d1a4a"/>
+          <stop offset="75%" stop-color="#6a3060"/><stop offset="100%" stop-color="#c06050"/>
+        </linearGradient>
+        <radialGradient id="lan-g" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffee88" stop-opacity=".95"/><stop offset="100%" stop-color="#ffee88" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="glow-l"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="sglow-l"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="400" height="220" fill="url(#sky-l)"/>
+      <!-- Stars -->
+      <circle cx="30" cy="15" r="1.1" fill="white" opacity=".7"/><circle cx="70" cy="8" r=".8" fill="white" opacity=".6"/>
+      <circle cx="115" cy="20" r=".9" fill="white" opacity=".5"/><circle cx="50" cy="35" r=".7" fill="white" opacity=".5"/>
+      <circle cx="160" cy="12" r="1" fill="white" opacity=".6"/><circle cx="200" cy="5" r="1.2" fill="white" opacity=".7"/>
+      <circle cx="240" cy="18" r=".8" fill="white" opacity=".5"/><circle cx="280" cy="8" r="1" fill="white" opacity=".6"/>
+      <circle cx="320" cy="22" r=".9" fill="white" opacity=".5"/><circle cx="355" cy="10" r="1.1" fill="white" opacity=".7"/>
+      <circle cx="385" cy="25" r=".8" fill="white" opacity=".6"/><circle cx="95" cy="42" r=".6" fill="white" opacity=".4"/>
+      <!-- Moon -->
+      <circle cx="340" cy="45" r="28" fill="#fffbe8" opacity=".1" filter="url(#glow-l)"/>
+      <circle cx="340" cy="45" r="20" fill="#fffbe8" opacity=".85"/>
+      <circle cx="334" cy="40" r="4" fill="#f0e870" opacity=".35"/>
+      <circle cx="345" cy="52" r="2.5" fill="#f0e870" opacity=".25"/>
+      <!-- Silhouette hills -->
+      <path d="M0,155 Q60,125 140,145 Q210,162 280,135 Q340,112 400,130 L400,220 L0,220Z" fill="#0a0f05"/>
+      <path d="M0,168 Q80,152 180,162 Q280,172 400,155 L400,220 L0,220Z" fill="#050a03"/>
+      <!-- Wildflowers / grass -->
+      <g opacity=".6">
+        <line x1="30" y1="180" x2="28" y2="165" stroke="#2a5a1a" stroke-width="1.5"/><circle cx="28" cy="163" r="3" fill="#e87098"/>
+        <line x1="45" y1="178" x2="44" y2="166" stroke="#2a5a1a" stroke-width="1.5"/><circle cx="44" cy="164" r="2.5" fill="#ffd060"/>
+        <line x1="55" y1="182" x2="54" y2="170" stroke="#2a5a1a" stroke-width="1.5"/><circle cx="54" cy="168" r="2.5" fill="#e87098"/>
+        <line x1="340" y1="180" x2="339" y2="167" stroke="#2a5a1a" stroke-width="1.5"/><circle cx="339" cy="165" r="3" fill="#ffd060"/>
+        <line x1="355" y1="178" x2="354" y2="166" stroke="#2a5a1a" stroke-width="1.5"/><circle cx="354" cy="164" r="2.5" fill="#e87098"/>
+        <line x1="370" y1="183" x2="369" y2="170" stroke="#2a5a1a" stroke-width="1.5"/><circle cx="369" cy="168" r="3" fill="#a0d060"/>
+      </g>
+      <!-- Character 1 (taller) -->
+      <circle cx="178" cy="146" r="9" fill="#f0d8b0"/>
+      <path d="M170,154 Q174,172 178,178 Q182,172 186,154 Z" fill="#4060a0"/>
+      <path d="M170,160 Q162,165 160,172" stroke="#4060a0" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <!-- Character 2 (shorter) -->
+      <circle cx="210" cy="150" r="8" fill="#f0c8a0"/>
+      <path d="M202,157 Q206,174 210,180 Q214,174 218,157 Z" fill="#c04060"/>
+      <path d="M218,163 Q226,168 228,174" stroke="#c04060" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <!-- Joined hands (small detail) -->
+      <path d="M186,168 Q198,162 202,165" stroke="#d0a878" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <!-- Sky lanterns floating up -->
+      <!-- Lantern 1 -->
+      <ellipse cx="120" cy="105" rx="8" ry="11" fill="#ffdd66" opacity=".9" filter="url(#sglow-l)"/>
+      <ellipse cx="120" cy="114" rx="5" ry="3" fill="#ff9920" opacity=".7"/>
+      <line x1="118" y1="117" x2="116" y2="122" stroke="#c8a040" stroke-width="1" opacity=".6"/>
+      <line x1="122" y1="117" x2="124" y2="122" stroke="#c8a040" stroke-width="1" opacity=".6"/>
+      <circle cx="120" cy="106" r="10" fill="url(#lan-g)" opacity=".3" filter="url(#glow-l)"/>
+      <!-- Lantern 2 -->
+      <ellipse cx="155" cy="80" rx="7" ry="10" fill="#ffcc44" opacity=".85" filter="url(#sglow-l)"/>
+      <ellipse cx="155" cy="88" rx="4.5" ry="2.5" fill="#ff8810" opacity=".65"/>
+      <circle cx="155" cy="81" r="8" fill="url(#lan-g)" opacity=".25" filter="url(#glow-l)"/>
+      <!-- Lantern 3 -->
+      <ellipse cx="240" cy="90" rx="6" ry="9" fill="#ffdd55" opacity=".8" filter="url(#sglow-l)"/>
+      <ellipse cx="240" cy="97" rx="4" ry="2" fill="#ff9920" opacity=".6"/>
+      <circle cx="240" cy="91" r="7" fill="url(#lan-g)" opacity=".25" filter="url(#glow-l)"/>
+      <!-- Lantern 4 -->
+      <ellipse cx="270" cy="60" rx="5" ry="8" fill="#ffe066" opacity=".75" filter="url(#sglow-l)"/>
+      <circle cx="270" cy="61" r="6" fill="url(#lan-g)" opacity=".2" filter="url(#glow-l)"/>
+      <!-- Lantern 5 -->
+      <ellipse cx="80" cy="72" rx="5" ry="7" fill="#ffcc44" opacity=".7" filter="url(#sglow-l)"/>
+      <circle cx="80" cy="73" r="6" fill="url(#lan-g)" opacity=".2" filter="url(#glow-l)"/>
+      <!-- Fireflies -->
+      <circle cx="140" cy="158" r="1.5" fill="#fffb80" opacity=".8" filter="url(#sglow-l)"/>
+      <circle cx="250" cy="155" r="1.2" fill="#fffb80" opacity=".7" filter="url(#sglow-l)"/>
+      <circle cx="100" cy="168" r="1" fill="#fffb80" opacity=".65" filter="url(#sglow-l)"/>
+      <circle cx="300" cy="160" r="1.3" fill="#fffb80" opacity=".75" filter="url(#sglow-l)"/>
+      <text x="200" y="214" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="white" opacity=".45" font-style="italic">váš sen</text>
+    </svg>`;
+
+  } else {
+    // Generic Ghibli: Nausicaä-style — letící postava nad mraky za zlatého soumraku, větrný svět
+    svg=`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <linearGradient id="sky-g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0d1a3e"/><stop offset="30%" stop-color="#1a3060"/>
+          <stop offset="65%" stop-color="#4080c0"/><stop offset="100%" stop-color="#70b8e8"/>
+        </linearGradient>
+        <linearGradient id="cloud1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="white" stop-opacity=".95"/><stop offset="100%" stop-color="white" stop-opacity=".6"/>
+        </linearGradient>
+        <radialGradient id="sun-g" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fffbe0"/><stop offset="50%" stop-color="#ffd060" stop-opacity=".6"/><stop offset="100%" stop-color="#ff9020" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="cloud-blur"><feGaussianBlur stdDeviation="2"/></filter>
+        <filter id="glow-g"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="sglow-g"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- Sky -->
+      <rect width="400" height="220" fill="url(#sky-g)"/>
+      <!-- Stars (upper) -->
+      <circle cx="20" cy="12" r="1.1" fill="white" opacity=".6"/><circle cx="55" cy="6" r=".8" fill="white" opacity=".5"/>
+      <circle cx="95" cy="18" r="1" fill="white" opacity=".55"/><circle cx="135" cy="8" r=".7" fill="white" opacity=".5"/>
+      <circle cx="175" cy="14" r=".9" fill="white" opacity=".45"/><circle cx="215" cy="4" r="1" fill="white" opacity=".5"/>
+      <circle cx="250" cy="20" r=".8" fill="white" opacity=".45"/><circle cx="295" cy="10" r="1.1" fill="white" opacity=".55"/>
+      <circle cx="335" cy="18" r=".9" fill="white" opacity=".5"/><circle cx="375" cy="7" r="1" fill="white" opacity=".6"/>
+      <!-- Sun (setting, large, glowing) -->
+      <circle cx="300" cy="155" r="80" fill="url(#sun-g)" opacity=".35"/>
+      <circle cx="300" cy="155" r="38" fill="#ffd060" opacity=".55" filter="url(#glow-g)"/>
+      <circle cx="300" cy="155" r="26" fill="#ffe080" opacity=".75"/>
+      <circle cx="300" cy="155" r="18" fill="#fffbe0"/>
+      <!-- Sun rays -->
+      <g stroke="#ffd060" stroke-width="1.5" opacity=".3">
+        <line x1="300" y1="110" x2="300" y2="95"/><line x1="300" y1="200" x2="300" y2="215"/>
+        <line x1="255" y1="155" x2="240" y2="155"/><line x1="345" y1="155" x2="360" y2="155"/>
+        <line x1="268" y1="123" x2="258" y2="113"/><line x1="332" y1="187" x2="342" y2="197"/>
+        <line x1="332" y1="123" x2="342" y2="113"/><line x1="268" y1="187" x2="258" y2="197"/>
+      </g>
+      <!-- Large cumulus clouds — Ghibli fluffy style -->
+      <!-- Cloud cluster 1 (left) -->
+      <ellipse cx="80" cy="145" rx="70" ry="30" fill="white" opacity=".88"/>
+      <ellipse cx="55" cy="132" rx="38" ry="26" fill="white" opacity=".92"/>
+      <ellipse cx="88" cy="128" rx="45" ry="30" fill="white" opacity=".95"/>
+      <ellipse cx="120" cy="138" rx="35" ry="22" fill="white" opacity=".88"/>
+      <ellipse cx="65" cy="120" rx="28" ry="20" fill="white" opacity=".9"/>
+      <ellipse cx="100" cy="115" rx="32" ry="22" fill="white" opacity=".85"/>
+      <!-- Cloud shadow undersides -->
+      <ellipse cx="80" cy="153" rx="65" ry="10" fill="#d0dce8" opacity=".4"/>
+      <ellipse cx="88" cy="148" rx="42" ry="8" fill="#c8d4e0" opacity=".3"/>
+      <!-- Cloud cluster 2 (background right, smaller) -->
+      <ellipse cx="340" cy="80" rx="48" ry="20" fill="white" opacity=".6"/>
+      <ellipse cx="320" cy="70" rx="28" ry="18" fill="white" opacity=".65"/>
+      <ellipse cx="355" cy="68" rx="32" ry="20" fill="white" opacity=".6"/>
+      <ellipse cx="330" cy="60" rx="20" ry="15" fill="white" opacity=".55"/>
+      <!-- Cloud cluster 3 (lower background) -->
+      <ellipse cx="220" cy="180" rx="60" ry="18" fill="white" opacity=".5"/>
+      <ellipse cx="200" cy="172" rx="35" ry="16" fill="white" opacity=".55"/>
+      <ellipse cx="240" cy="170" rx="38" ry="18" fill="white" opacity=".5"/>
+      <!-- Flying figure (Nausicaä / Howl style) — small, high up -->
+      <!-- Wings/glider -->
+      <path d="M175,68 Q185,62 195,65 Q200,63 205,65 Q215,62 225,68 Q210,75 200,74 Q190,75 175,68Z" fill="#c0d8f0" opacity=".9"/>
+      <path d="M178,68 Q188,64 195,66 L195,74 Q185,73 178,68Z" fill="#a0c0e0" opacity=".8"/>
+      <path d="M205,66 L205,74 Q215,73 222,68 Q215,64 205,66Z" fill="#a0c0e0" opacity=".8"/>
+      <!-- Figure body -->
+      <ellipse cx="200" cy="72" rx="5" ry="7" fill="#f0c8a0"/>
+      <circle cx="200" cy="65" r="5" fill="#f0c8a0"/>
+      <!-- Scarf streaming behind -->
+      <path d="M200,70 Q192,75 184,80 Q178,84 170,86" stroke="#e04040" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>
+      <path d="M200,72 Q190,78 181,85" stroke="#e06060" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".6"/>
+      <!-- Speed lines (wind) -->
+      <line x1="145" y1="60" x2="165" y2="62" stroke="white" stroke-width="1" opacity=".3" stroke-linecap="round"/>
+      <line x1="148" y1="68" x2="168" y2="69" stroke="white" stroke-width=".8" opacity=".25" stroke-linecap="round"/>
+      <line x1="143" y1="75" x2="160" y2="76" stroke="white" stroke-width=".8" opacity=".2" stroke-linecap="round"/>
+      <!-- Birds (distant) -->
+      <path d="M250,45 Q253,41 256,45" stroke="#1a2a50" stroke-width="1.2" fill="none"/>
+      <path d="M262,38 Q265,34 268,38" stroke="#1a2a50" stroke-width="1.2" fill="none"/>
+      <path d="M238,52 Q241,48 244,52" stroke="#1a2a50" stroke-width="1" fill="none" opacity=".7"/>
+      <!-- Landscape horizon (distant land) -->
+      <path d="M0,195 Q100,175 200,185 Q300,195 400,175 L400,220 L0,220Z" fill="#0d2a14" opacity=".7"/>
+      <path d="M0,205 Q120,195 240,205 Q320,212 400,200 L400,220 L0,220Z" fill="#091a0a"/>
+      <text x="200" y="214" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="white" opacity=".4" font-style="italic">váš sen</text>
+    </svg>`;
+  }
+  return svg;
+}
+
+// ══════════════════════════════════
+// XIRR — Newton-Raphson
+// Standardní konvence: odtok (investice) = záporný, přítok (výnos/zůstatek) = kladný.
+// t = čas v letech od počátku (0 = dnes, 1 = konec 1. roku, ...)
+// NPV(r) = Σ v_i / (1+r)^t_i = 0  →  hledáme r
+// ══════════════════════════════════
+function calcXIRR(flows){
+  if(!flows||flows.length<2) return null;
+  // Ověř, zda existuje alespoň jeden záporný a jeden kladný tok
+  const hasNeg=flows.some(f=>f.v<0);
+  const hasPos=flows.some(f=>f.v>0);
+  if(!hasNeg||!hasPos) return null;
+
+  const MAX=400, TOL=1e-9;
+  // Zkusíme více počátečních odhadů, aby se předešlo konvergenci do špatného kořene
+  const seeds=[0.1,0.5,-0.1,2.0,-0.5];
+  for(const seed of seeds){
+    let r=seed;
+    let ok=false;
+    for(let i=0;i<MAX;i++){
+      let f=0,df=0;
+      for(const fl of flows){
+        if(fl.t===0){ f+=fl.v; continue; } // (1+r)^0 = 1, df příspěvek = 0
+        const base=1+r;
+        if(base<=0) break;
+        const d=Math.pow(base,fl.t);
+        f+=fl.v/d;
+        df+=(-fl.t*fl.v)/(base*d);
+      }
+      if(!isFinite(f)) break;
+      if(Math.abs(df)<1e-14) break;
+      const nr=r-f/df;
+      if(!isFinite(nr)||nr<=-1) break;
+      if(Math.abs(nr-r)<TOL){ r=nr; ok=true; break; }
+      r=nr;
+    }
+    if(ok&&isFinite(r)&&r>-1) return r*100;
+  }
+  return null;
+}
+
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+let G={};
+let alloc1=mkA0(), alloc2=mkA0(), ra1=mkA0(), ra2=mkA0();
+let CH={};
+function mkA0(){ return ASSETS.reduce((o,a)=>({...o,[a.id]:0}),{}); }
+
+// ══════════════════════════════════
+// FORMAT
+// ══════════════════════════════════
+function fkc(v){ return Math.round(v).toLocaleString('cs-CZ')+' Kč'; }
+function fn(v){ return Math.round(v).toLocaleString('cs-CZ'); }
+function fp(v){ return (v>=0?'+':'')+v.toFixed(1)+' %'; }
+function fpp(v){ return (v!==null&&isFinite(v)?v.toFixed(2):'—')+' %'; }
+function clamp(v,lo,hi){ return Math.min(Math.max(v,lo),hi); }
+function ta(a){ return ASSETS.reduce((s,x)=>s+(a[x.id]||0),0); }
+
+// ══════════════════════════════════
+// SLIDER SYNC
+// ══════════════════════════════════
+function sync(sid,nid,cb){
+  const s=document.getElementById(sid), n=document.getElementById(nid);
+  if(!s||!n) return;
+  const up=src=>{
+    if(src==='s') n.value=parseFloat(s.value)||0;
+    else s.value=clamp(parseFloat(n.value)||0,parseFloat(s.min)||0,parseFloat(s.max)||9999999);
+    if(cb) cb();
+  };
+  s.addEventListener('input',()=>up('s'));
+  n.addEventListener('input',()=>up('n'));
+}
+
+// ══════════════════════════════════
+// ALLOC ROWS
+// ══════════════════════════════════
+function buildAlloc(cid, obj, fillId, totId, warnId){
+  const el=document.getElementById(cid); if(!el) return;
+  el.innerHTML='';
+  ASSETS.forEach(a=>{
+    const row=document.createElement('div'); row.className='arow';
+    const v=obj[a.id]||0;
+    row.innerHTML=`<span class="adot" style="background:${a.color}"></span>
+      <span class="alabel" title="${a.lbl}">${a.lbl}</span>
+      <input type="range" min="0" max="100" step="5" value="${v}" id="as-${cid}-${a.id}">
+      <input type="number" min="0" max="100" step="5" value="${v}" class="anum" id="an-${cid}-${a.id}">
+      <span class="apct" id="ap-${cid}-${a.id}">${v} %</span>`;
+    el.appendChild(row);
+    const sl=document.getElementById(`as-${cid}-${a.id}`);
+    const nu=document.getElementById(`an-${cid}-${a.id}`);
+    const pg=document.getElementById(`ap-${cid}-${a.id}`);
+    const upd=src=>{
+      const val=src==='sl'?parseInt(sl.value):clamp(parseInt(nu.value)||0,0,100);
+      obj[a.id]=val; sl.value=val; nu.value=val; pg.textContent=val+' %';
+      refreshTot(obj,fillId,totId,warnId);
+    };
+    sl.addEventListener('input',()=>upd('sl'));
+    nu.addEventListener('input',()=>upd('nu'));
+  });
+  refreshTot(obj,fillId,totId,warnId);
+}
+function refreshTot(obj,fillId,totId,warnId){
+  const t=ta(obj);
+  const f=document.getElementById(fillId), tx=document.getElementById(totId), w=document.getElementById(warnId);
+  if(f){f.style.width=Math.min(t,100)+'%';f.style.background=t===100?'#10b981':t>100?'#ef4444':'#f59e0b';}
+  if(tx){tx.textContent=t+' %';tx.style.color=t===100?'#10b981':'#f59e0b';}
+  if(w) w.style.display=t!==100?'block':'none';
+  return t===100;
+}
+
+// ══════════════════════════════════
+// START
+// ══════════════════════════════════
+function startGame(){
+  if(ta(alloc1)!==100){document.getElementById('w1').style.display='block';return;}
+  if(ta(alloc2)!==100){document.getElementById('w2').style.display='block';return;}
+  const cap=parseFloat(document.getElementById('n-cap').value)||0;
+  const inf=parseFloat(document.getElementById('n-inf').value)||0;
+  const mon=parseFloat(document.getElementById('n-mon').value)||0;
+  const g1t=parseFloat(document.getElementById('n-g1t').value)||0;
+  const g2t=parseFloat(document.getElementById('n-g2t').value)||0;
+  const g1s=(parseFloat(document.getElementById('n-g1s').value)||0)/100;
+  const g1name=document.getElementById('g1name').value.trim()||'Cíl 1';
+  const g2name=document.getElementById('g2name').value.trim()||'Cíl 2';
+  const participantName=document.getElementById('participant-name').value.trim()||'Neznámý účastník';
+
+  G={
+    round:0, cap, inf, mon, contrib:mon*12, g1t, g2t, g1s, g1name, g2name, participantName,
+    a1:{...alloc1}, a2:{...alloc2},
+    g1v:cap*g1s, g2v:cap*(1-g1s),
+    g1done:false, g1fv:0,
+    cumInfl:1, totalInv:cap,
+    savSplit:g1s,           // fraction of annual savings → C1 (editable each year 1-3)
+    // XIRR cash-flow arrays:
+    //   záporné v = odtok (investice hráče)
+    //   kladné v  = přítok (výnos / terminální hodnota)
+    //   t         = čas v letech od startu (0 = okamžik zahájení)
+    // Počáteční kapitál se investuje v t=0
+    xf1: cap*g1s   > 0 ? [{t:0, v:-(cap*g1s)}]   : [],
+    xf2: cap*(1-g1s)>0 ? [{t:0, v:-(cap*(1-g1s))}]: [],
+    history:[]
+  };
+
+  document.getElementById('setup-panel').classList.add('hidden');
+  document.getElementById('game-panel').classList.remove('hidden');
+  renderRound();
+}
+
+// ══════════════════════════════════
+// REALLOC MODAL
+// ══════════════════════════════════
+function openRealloc(){
+  const rn=G.round+1, isEarly=G.round<3;
+  document.getElementById('rmod-title').textContent=`Nastavení před Rokem ${rn}`;
+  document.getElementById('rmod-sub').textContent=isEarly
+    ?`Rok ${rn} z 10 — Upravte alokaci, měsíční úložku a rozdělení úspor mezi cíle 1 a 2. Cíl 1 končí po roce 3.`
+    :`Rok ${rn} z 10 — Cíl 1 ukončen. Veškeré úspory nyní plynou na Cíl 2. Upravte alokaci.`;
+
+  ASSETS.forEach(a=>{ra1[a.id]=G.a1[a.id]||0; ra2[a.id]=G.a2[a.id]||0;});
+
+  // Monthly — reset and wire up
+  const rsMon=document.getElementById('rs-mon'), rnMon=document.getElementById('rn-mon');
+  rsMon.value=G.mon||0; rnMon.value=G.mon||'';
+  document.getElementById('rannual').textContent=fkc((G.mon||0)*12);
+
+  // Wire monthly slider ↔ number — also refreshes split Kč when annual changes
+  const onMonChange=()=>{
+    const m=parseFloat(document.getElementById('rn-mon').value)||0;
+    document.getElementById('rannual').textContent=fkc(m*12);
+    document.getElementById('spl-total-kc').textContent=fkc(m*12);
+    // Recompute Kč fields from current % split
+    const pct=parseInt(document.getElementById('rs-spl').value)||0;
+    updateSplitFromPct(pct, m*12);
+  };
+  // Remove old listeners by replacing elements (clean approach via sync re-wire)
+  rsMon.oninput=()=>{ rnMon.value=parseFloat(rsMon.value)||0; onMonChange(); };
+  rnMon.oninput=()=>{ rsMon.value=clamp(parseFloat(rnMon.value)||0,0,50000); onMonChange(); };
+
+  // Split block visibility
+  const sb=document.getElementById('split-block');
+  const ra1w=document.getElementById('ra1-wrap');
+  if(isEarly){
+    sb.style.display='block';
+    ra1w.style.opacity='1'; ra1w.style.pointerEvents='auto';
+    const sp=Math.round(G.savSplit*100);
+    const annual=(G.mon||0)*12;
+    document.getElementById('spl-total-kc').textContent=fkc(annual);
+    document.getElementById('rs-spl').value=sp;
+    document.getElementById('rn-spl').value=sp;
+    updateSplitFromPct(sp, annual);
+    wireSplitInputs(annual);
+  } else {
+    sb.style.display='none';
+    ra1w.style.opacity='0.35'; ra1w.style.pointerEvents='none';
+  }
+
+  buildAlloc('ra1rows',ra1,'ra1fill','ra1tot','rw1');
+  buildAlloc('ra2rows',ra2,'ra2fill','ra2tot','rw2');
+  document.getElementById('rov').classList.add('open');
+}
+
+// Aktualizuje vizuální bar, popisky % a Kč pole z procentuálního splittu
+function updateSplitFromPct(pct, annual){
+  const c1kc=Math.round(annual*pct/100);
+  const c2kc=Math.round(annual*(100-pct)/100);
+  // Bar
+  const sv1=document.getElementById('sv1'), sv2=document.getElementById('sv2');
+  if(sv1){sv1.style.width=pct+'%'; sv2.style.width=(100-pct)+'%';}
+  // % labels
+  const sl1=document.getElementById('sl1'), sl2=document.getElementById('sl2');
+  if(sl1){sl1.textContent=pct+' %'; sl2.textContent=(100-pct)+' %';}
+  // Kč fields (without re-triggering listeners)
+  const c1el=document.getElementById('rn-c1kc'), c2el=document.getElementById('rn-c2kc');
+  if(c1el) c1el.value=c1kc||'';
+  if(c2el) c2el.value=c2kc||'';
+  // Hide warning
+  const w=document.getElementById('split-warn'); if(w) w.style.display='none';
+}
+
+// Aktualizuje bar, popisky % a slider z přímého zadání Kč
+function updateSplitFromKc(c1kc, c2kc, annual){
+  // Validace: součet nesmí překročit roční příspěvek
+  const w=document.getElementById('split-warn');
+  if(c1kc+c2kc>annual+0.01){
+    if(w) w.style.display='block';
+    return;
+  }
+  if(w) w.style.display='none';
+  // Pokud je annual 0, nemůžeme počítat %
+  const pct=annual>0?Math.round(c1kc/annual*100):0;
+  const pctClamped=clamp(pct,0,100);
+  // Slider + číslo % splittu
+  const rs=document.getElementById('rs-spl'), rn=document.getElementById('rn-spl');
+  if(rs) rs.value=pctClamped;
+  if(rn) rn.value=pctClamped;
+  // Bar
+  const sv1=document.getElementById('sv1'), sv2=document.getElementById('sv2');
+  if(sv1){sv1.style.width=pctClamped+'%'; sv2.style.width=(100-pctClamped)+'%';}
+  // % labels
+  const sl1=document.getElementById('sl1'), sl2=document.getElementById('sl2');
+  if(sl1){sl1.textContent=pctClamped+' %'; sl2.textContent=(100-pctClamped)+' %';}
+}
+
+// Napojí všechny split vstupy na správné handlery (voláno při otevření modalu)
+function wireSplitInputs(initialAnnual){
+  const getAnnual=()=>(parseFloat(document.getElementById('rn-mon').value)||0)*12;
+
+  // Slider % → vše
+  const rsSpl=document.getElementById('rs-spl'), rnSpl=document.getElementById('rn-spl');
+  rsSpl.oninput=()=>{
+    const v=parseInt(rsSpl.value)||0; rnSpl.value=v;
+    updateSplitFromPct(v, getAnnual());
+  };
+  // Číslo % → vše
+  rnSpl.oninput=()=>{
+    const v=clamp(parseInt(rnSpl.value)||0,0,100); rsSpl.value=v;
+    updateSplitFromPct(v, getAnnual());
+  };
+  // Kč Cíl 1 → dopočítej C2 a aktualizuj %
+  const c1el=document.getElementById('rn-c1kc');
+  c1el.oninput=()=>{
+    const ann=getAnnual();
+    const c1=clamp(parseFloat(c1el.value)||0,0,ann);
+    const c2=Math.max(0,ann-c1);
+    const c2el=document.getElementById('rn-c2kc');
+    if(c2el) c2el.value=c2||'';
+    updateSplitFromKc(c1, c2, ann);
+  };
+  // Kč Cíl 2 → dopočítej C1 a aktualizuj %
+  const c2el=document.getElementById('rn-c2kc');
+  c2el.oninput=()=>{
+    const ann=getAnnual();
+    const c2=clamp(parseFloat(c2el.value)||0,0,ann);
+    const c1=Math.max(0,ann-c2);
+    const c1el2=document.getElementById('rn-c1kc');
+    if(c1el2) c1el2.value=c1||'';
+    updateSplitFromKc(c1, c2, ann);
+  };
+}
+
+function confirmRealloc(){
+  const isEarly=G.round<3;
+  if(isEarly && ta(ra1)!==100){document.getElementById('rw1').style.display='block';return;}
+  if(ta(ra2)!==100){document.getElementById('rw2').style.display='block';return;}
+  if(isEarly){ G.a1={...ra1}; }
+  G.a2={...ra2};
+  const nm=parseFloat(document.getElementById('rn-mon').value)||0;
+  G.mon=nm; G.contrib=nm*12;
+  if(isEarly){
+    // Načteme finální split z % slideru (je vždy synchronizovaný)
+    G.savSplit=clamp(parseInt(document.getElementById('rs-spl').value)||0,0,100)/100;
+  }
+  document.getElementById('rov').classList.remove('open');
+  advanceRound();
+}
+
+// ══════════════════════════════════
+// ADVANCE ROUND
+// ══════════════════════════════════
+// Realita investování:
+//   1) Stávající kapitál se CELÝ ROK úročí podle zvoleného aktiva
+//   2) NA KONCI roku přijde příspěvek (úspory) — ten se v tomto roce ještě neúročí
+//   3) V dalším roce se úročí (kapitál + příspěvek) dohromady
+//
+// Vzorec: nová_hodnota = stará_hodnota * (1 + výnos%) + příspěvek
+// XIRR: příspěvky jsou na t = konec roku (po úročení) = G.round po inkrementu
+function advanceRound(){
+  if(G.round>=10){showResults();return;}
+  const rd=ROUNDS[G.round];
+  G.cumInfl*=(1+G.inf/100);
+  const isEarly=G.round<3; // roky 1-3 (indexy 0-2) = fáze Cíle 1
+
+  // Rozdělení příspěvku mezi cíle (jen v prvních 3 kolech)
+  const c1c=isEarly ? G.contrib*G.savSplit : 0;
+  const c2c=isEarly ? G.contrib*(1-G.savSplit) : G.contrib;
+
+  // ── Výpočet hodnot ────────────────────────────────────────────────
+  // Krok 1: kapitál se úročí celý rok
+  // Krok 2: na konci roku přijde příspěvek (ještě se letos neúročí)
+  let g1r=0, g1new=G.g1v;
+  if(!G.g1done){
+    g1r=ASSETS.reduce((s,a)=>s+(G.a1[a.id]||0)/100*(rd.r[a.id]||0),0);
+    g1new = G.g1v*(1+g1r/100) + c1c;   // úrok celý rok, pak příspěvek
+  }
+  const g2r=ASSETS.reduce((s,a)=>s+(G.a2[a.id]||0)/100*(rd.r[a.id]||0),0);
+  const g2new = G.g2v*(1+g2r/100) + c2c; // úrok celý rok, pak příspěvek
+
+  G.g1v = G.g1done ? G.g1fv : g1new;
+  G.g2v = g2new;
+  G.totalInv += G.contrib;
+  G.round++;   // G.round nyní = číslo právě dokončeného roku (1..10)
+
+  // ── XIRR cash-flow recording ──────────────────────────────────────
+  // Konvence XIRR: odtok (investice) = záporný, přítok (výnos/zůstatek) = kladný
+  // t = čas v letech od zahájení simulace
+  //
+  // Počáteční kapitál: t=0 (zapsán při startu)
+  // Příspěvky: přicházejí NA KONCI každého roku → t = G.round (po inkrementu)
+  //   Rok 1 → příspěvek na t=1, Rok 2 → t=2, ... Rok 10 → t=10
+  const tEnd = G.round; // konec právě dokončeného roku
+  if(isEarly && c1c>0) G.xf1.push({t: tEnd, v: -c1c});
+  if(c2c>0)            G.xf2.push({t: tEnd, v: -c2c});
+
+  // ── Uzavření Cíle 1 po roce 3 ─────────────────────────────────────
+  if(G.round===3 && !G.g1done){
+    G.g1done=true;
+    G.g1fv=G.g1v;
+    // Terminální hodnota C1 = přítok investorovi na t=3
+    G.xf1.push({t:3, v: G.g1fv});
+    // Zůstatek C1 se převede do C2 — pro XIRR C2 jde o nový vklad investora na t=3
+    G.g2v += G.g1v;
+    G.xf2.push({t:3, v: -G.g1fv});
+  }
+
+  G.history.push({
+    rnd:G.round, lbl:rd.l,
+    g1v: G.g1done && G.round>=3 ? G.g1fv : G.g1v,
+    g2v: G.g2v, g1r, g2r,
+    ret:{...rd.r}, crash:rd.crash||false,
+    realG2: G.g2v/G.cumInfl, totalInv: G.totalInv,
+  });
+
+  showNewspaper(G.round-1);
+}
+
+// ══════════════════════════════════
+// XIRR helpers
+// ══════════════════════════════════
+function getXIRR1(){
+  const flows=[...G.xf1];
+  if(!G.g1done){
+    // C1 ještě běží — přidáme aktuální tržní hodnotu jako hypotetický výnos
+    flows.push({t: G.round, v: G.g1v});
+  }
+  // G.g1done=true → terminální hodnota je již v xf1 z okamžiku ukončení
+  return calcXIRR(flows);
+}
+function getXIRR2(){
+  // Přidáme aktuální hodnotu C2 jako přítok na konci posledního kola
+  return calcXIRR([...G.xf2, {t: G.round, v: G.g2v}]);
+}
+
+// ══════════════════════════════════
+// NEWSPAPER
+// ══════════════════════════════════
+function showNewspaper(ri){
+  const nw=NEWS[ri], rd=ROUNDS[ri], h=G.history[G.history.length-1];
+  const yr=2024+G.round;
+  const maxR=Math.max(...ASSETS.map(a=>Math.abs(rd.r[a.id]||0)))||1;
+
+  let arRows='';
+  ASSETS.forEach(a=>{
+    const rv=rd.r[a.id]||0;
+    const col=rv>0?'#1A6B3C':'#C0392B';
+    const bw=Math.abs(rv)/maxR*100;
+    arRows+=`<div class="np-ar"><span class="np-adot" style="background:${a.color}"></span>
+      <span class="np-aname">${a.lbl}</span>
+      <div class="np-abar"><div class="np-abarfill" style="width:${bw.toFixed(0)}%;background:${rv>=0?'#1A6B3C':'#C0392B'}"></div></div>
+      <span class="np-aval" style="color:${col}">${rv>=0?'+':''}${rv.toFixed(1)} % ${rv>0?'▲':'▼'}</span></div>`;
+  });
+
+  const g1p=G.g1t>0?(h.g1v/G.g1t*100).toFixed(0)+'%':'—';
+  const g2p=G.g2t>0?(h.g2v/G.g2t*100).toFixed(0)+'%':'—';
+  const crashH=nw.crash?`<div class="np-crash">⚠ <strong>Krizový rok:</strong> Diverzifikace dnes rozhoduje o přežití portfolia.</div>`:'';
+  const outH=nw.out?`<div class="np-out"><div class="np-out-h">📋 Výhled na příští rok</div>${nw.out}</div>`:'';
+
+  document.getElementById('nov-inner').innerHTML=`<div class="np">
+    <div class="np-head">
+      <div class="np-name">Zlínské Tajmsy</div>
+      <div class="np-sub">Nezávislý finanční deník · Zlín & svět</div>
+      <div class="np-bar"><span>Číslo ${ri+1} · ${yr}. ročník</span><span class="np-badge">Výroční vydání</span><span>${rd.l} — Uzavřeno</span></div>
+    </div>
+    <div class="np-body">
+      <div class="np-main">
+        <div class="np-sec">${nw.sec}</div>
+        <h2 class="np-h ${nw.crash?'crash':''}">${nw.h}</h2>
+        <div class="np-by">Redakce Zlínských Tajmsů · ${yr}</div>
+        <img class="np-img" src="${nw.img}" alt="${nw.alt}" onerror="this.style.display='none'">
+        <div class="np-cap">${nw.alt} · Ilustrační foto</div>
+        <div class="np-sf">${nw.sf}</div>
+        <div class="np-rl"></div>
+        <div class="np-txt">${nw.body}</div>
+        ${crashH}${outH}
+      </div>
+      <div class="np-side">
+        <div class="np-stitle">📊 Výnosy aktiv · ${rd.l}</div>
+        ${arRows}
+        <div class="np-idx">
+          <div class="np-idxtitle">Vaše portfolio</div>
+          <div class="np-idxrow"><span>🎯 ${G.g1name}</span><span>${fn(h.g1v)} Kč</span></div>
+          <div class="np-idxrow"><span>Splnění C1</span><span style="color:${parseInt(g1p)>=100?'#1A6B3C':'#C0392B'}">${g1p}</span></div>
+          <div class="np-idxrow"><span>📈 ${G.g2name}</span><span>${fn(h.g2v)} Kč</span></div>
+          <div class="np-idxrow"><span>Splnění C2</span><span style="color:${parseInt(g2p)>=100?'#1A6B3C':'#C0392B'}">${g2p}</span></div>
+          <div class="np-idxrow"><span>G2 reálná</span><span>${fn(h.realG2)} Kč</span></div>
+          <div class="np-idxrow"><span>Investováno</span><span>${fn(h.totalInv)} Kč</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="np-foot"><span>© ${yr} Zlínské Tajmsy · Invest Gym</span><span>Zdarma pro studenty</span></div>
+  </div>`;
+
+  document.getElementById('nov').classList.add('open');
+}
+
+function closeNewspaper(){
+  document.getElementById('nov').classList.remove('open');
+  if(G.round>=10){showResults();return;}
+  renderRound();
+}
+
+// ══════════════════════════════════
+// RENDER ROUND
+// ══════════════════════════════════
+function renderRound(){
+  buildTL(); buildRBar();
+  renderStats(); renderGoals();
+  renderHistTable(); updateCharts();
+  document.getElementById('adv-btn').textContent=G.round===9?'🏁 Nastavit alokaci a dokončit':'▶ Nastavit rok a pokračovat';
+}
+
+function buildTL(){
+  const el=document.getElementById('tlsegs'); el.innerHTML='';
+  for(let i=0;i<10;i++){
+    if(i===3){const d=document.createElement('span');d.style.cssText='font-size:9px;color:#10b981;white-space:nowrap;padding:0 3px;align-self:flex-end;margin-bottom:11px;';d.textContent='C1↑';el.appendChild(d);}
+    const it=document.createElement('div'); it.className='tl-item';
+    const sg=document.createElement('div'); sg.className='tl-s';
+    if(i<G.round) sg.classList.add(ROUNDS[i].crash?'crash':i<3?'g1d':'done');
+    else if(i===G.round) sg.classList.add('active');
+    sg.title=ROUNDS[i].l+(ROUNDS[i].crash?' — KRACH':i<3?' — Cíl 1':'');
+    const nm=document.createElement('span'); nm.className='tl-n'; nm.textContent=i+1;
+    it.appendChild(sg); it.appendChild(nm); el.appendChild(it);
+  }
+}
+
+function buildRBar(){
+  const rd=ROUNDS[Math.min(G.round,9)];
+  let b=G.round<3?`<span class="badge bg1">Cíl 1 aktivní</span>`:`<span class="badge bgd">Cíl 1 ukončen</span>`;
+  document.getElementById('rbar').innerHTML=`<strong>${rd.l}</strong><span style="color:var(--tx3)">·</span><span style="color:var(--tx2);font-size:12px">Kolo ${G.round+1} z 10</span>${b}`;
+}
+
+function renderStats(){
+  const tot=G.g1done?G.g2v:G.g1v+G.g2v;
+  const x1=getXIRR1(), x2=getXIRR2();
+  const rv=tot/G.cumInfl, il=tot-rv;
+  document.getElementById('statcards').innerHTML=`
+    <div class="metric"><div class="mlabel">Portfolio celkem</div><div class="mval bl">${fn(tot)}</div></div>
+    <div class="metric"><div class="mlabel">XIRR Cíl 1</div><div class="mval ${x1!==null&&x1>=0?'gr':'rd'}">${fpp(x1)}</div></div>
+    <div class="metric"><div class="mlabel">XIRR Cíl 2</div><div class="mval ${x2!==null&&x2>=0?'gr':'rd'}">${fpp(x2)}</div></div>
+    <div class="metric"><div class="mlabel">Ztráta inflací</div><div class="mval am">−${fn(il)}</div></div>`;
+  document.getElementById('s-inv').textContent=fkc(G.totalInv);
+  document.getElementById('s-val').textContent=fkc(tot);
+  document.getElementById('s-val').className='mval '+(tot>=G.totalInv?'bl':'rd');
+}
+
+function renderGoals(){
+  const g1p=G.g1t>0?G.g1v/G.g1t*100:0;
+  const g2p=G.g2t>0?G.g2v/G.g2t*100:0;
+  const c1=g1p>=100?'#10b981':g1p>=70?'#f59e0b':'#ef4444';
+  const c2=g2p>=100?'#10b981':g2p>=70?'#f59e0b':'#ef4444';
+
+  document.getElementById('goalcards').innerHTML=`
+    <div class="gcard">
+      <div class="gcard-dream" id="gdream1">
+        <img id="gimg1" alt="${G.g1name}" style="width:100%;height:100%;object-fit:cover;display:block">
+      </div>
+      <div class="gcard-body">
+        <div class="gctitle"><span class="badge bg1">Cíl 1 · 3 roky</span></div>
+        <div class="gdream-label">Váš sen:</div>
+        <div class="gname">${G.g1name}</div>
+        <div class="gval" style="color:${c1}">${fn(G.g1v)}</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:3px">Cíl: ${fkc(G.g1t)}</div>
+        <div class="pbar"><div class="pfill" style="width:${Math.min(g1p,100).toFixed(1)}%;background:${c1}"></div></div>
+        <div style="font-size:11px;color:var(--tx3)">${G.g1t>0?g1p.toFixed(0)+' % z cíle':'—'}${G.g1done?' — ✓ Splněno':''}</div>
+      </div>
+    </div>
+    <div class="gcard">
+      <div class="gcard-dream" id="gdream2">
+        <img id="gimg2" alt="${G.g2name}" style="width:100%;height:100%;object-fit:cover;display:block">
+      </div>
+      <div class="gcard-body">
+        <div class="gctitle"><span class="badge bg2">Cíl 2 · 10 let</span></div>
+        <div class="gdream-label">Váš sen:</div>
+        <div class="gname">${G.g2name}</div>
+        <div class="gval" style="color:${c2}">${fn(G.g2v)}</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:3px">Cíl: ${fkc(G.g2t)}</div>
+        <div class="pbar"><div class="pfill" style="width:${Math.min(g2p,100).toFixed(1)}%;background:${c2}"></div></div>
+        <div style="font-size:11px;color:var(--tx3)">${G.g2t>0?g2p.toFixed(0)+' % z cíle':'—'}</div>
+      </div>
+    </div>`;
+
+  // Load Unsplash photos after DOM is rendered
+  setGoalImage(document.getElementById('gimg1'), G.g1name, '#10b981', '#3b82f6');
+  setGoalImage(document.getElementById('gimg2'), G.g2name, '#3b82f6', '#8b5cf6');
+}
+
+function renderPortTab(){
+  const bt=(eid,obj,gv)=>{
+    const el=document.getElementById(eid);
+    let h='<table><thead><tr><th>Aktivum</th><th style="text-align:right">%</th><th style="text-align:right">Kč</th></tr></thead><tbody>';
+    ASSETS.forEach(a=>{
+      const p=obj[a.id]||0;
+      h+=`<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${a.color};margin-right:6px;vertical-align:middle"></span>${a.lbl}</td>
+        <td style="text-align:right">${p} %</td><td style="text-align:right">${fn(gv*p/100)}</td></tr>`;
+    });
+    el.innerHTML=h+'</tbody></table>';
+  };
+  bt('pt1',G.a1,G.g1v); bt('pt2',G.a2,G.g2v);
+  ['pie1','pie2'].forEach((id,i)=>{
+    if(CH[id]){CH[id].destroy();delete CH[id];}
+    const ao=i===0?G.a1:G.a2;
+    CH[id]=new Chart(document.getElementById(id),{
+      type:'doughnut',
+      data:{labels:ASSETS.map(a=>a.sh),datasets:[{data:ASSETS.map(a=>ao[a.id]||0),backgroundColor:ASSETS.map(a=>a.color),borderColor:'#1a2e4a',borderWidth:2}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#8fa8c8',font:{size:10},boxWidth:8,padding:5}}}}
+    });
+  });
+}
+
+const SC={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+  scales:{y:{ticks:{color:'#5a7a9a',callback:v=>{const n=Math.abs(Math.round(v));return n>=1000000?(v/1000000).toFixed(1)+'M':n>=1000?(v/1000).toFixed(0)+'k':v}},grid:{color:'rgba(255,255,255,.05)'}},
+    x:{ticks:{color:'#5a7a9a',font:{size:10}},grid:{color:'rgba(255,255,255,.05)'}}}};
+
+function updateCharts(){
+  if(!G.history.length) return;
+  const lbs=G.history.map(h=>h.lbl);
+  const g1v=G.history.map(h=>Math.round(h.g1v));
+  const g2v=G.history.map(h=>Math.round(h.g2v));
+  const rg2=G.history.map(h=>Math.round(h.realG2));
+  const tg2=G.history.map(()=>Math.round(G.g2t));
+
+  const l1=lbs.slice(0,Math.min(G.history.length,3));
+  if(CH.cg1) CH.cg1.destroy();
+  CH.cg1=new Chart(document.getElementById('cg1'),{type:'line',
+    data:{labels:l1,datasets:[
+      {data:g1v.slice(0,l1.length),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.1)',borderWidth:2,pointRadius:5,fill:true,tension:0.3},
+      {data:l1.map(()=>Math.round(G.g1t)),borderColor:'rgba(255,255,255,.2)',borderWidth:1,borderDash:[4,3],pointRadius:0,fill:false},
+    ]},options:{...SC}});
+
+  if(CH.cg2) CH.cg2.destroy();
+  CH.cg2=new Chart(document.getElementById('cg2'),{type:'line',
+    data:{labels:lbs,datasets:[
+      {data:g2v,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.07)',borderWidth:2,pointRadius:3,fill:true,tension:0.3},
+      {data:rg2,borderColor:'#f59e0b',borderWidth:2,pointRadius:3,borderDash:[5,3],fill:false,tension:0.3},
+      {data:tg2,borderColor:'rgba(16,185,129,.35)',borderWidth:1,borderDash:[3,3],pointRadius:0,fill:false},
+    ]},options:{...SC}});
+
+  const n=Math.min(G.history.length,5);
+  const rh=G.history.slice(-n);
+  if(CH.cret) CH.cret.destroy();
+  CH.cret=new Chart(document.getElementById('cret'),{type:'bar',
+    data:{labels:rh.map(h=>h.lbl),datasets:ASSETS.map(a=>({label:a.sh,data:rh.map(h=>parseFloat(h.ret[a.id].toFixed(1))),backgroundColor:a.color}))},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,labels:{color:'#8fa8c8',font:{size:10},boxWidth:8,padding:5}}},
+      scales:{x:{ticks:{color:'#5a7a9a',font:{size:10}},grid:{color:'rgba(255,255,255,.05)'}},
+        y:{ticks:{color:'#5a7a9a',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.05)'}}}}});
+}
+
+function renderHistTable(){
+  const el=document.getElementById('histtbl');
+  if(!G.history.length){el.innerHTML='<p style="font-size:12px;color:var(--tx3);padding:8px 0">Zatím žádná kola.</p>';return;}
+  let h='<table><thead><tr><th>Rok</th><th style="text-align:right">C1</th><th style="text-align:right">Výnos C1</th><th style="text-align:right">C2</th><th style="text-align:right">Výnos C2</th><th style="text-align:right">G2 reál.</th><th style="text-align:right">Inv.</th></tr></thead><tbody>';
+  G.history.forEach(hh=>{
+    const c1=hh.g1r>=0?'#10b981':'#ef4444', c2=hh.g2r>=0?'#10b981':'#ef4444';
+    h+=`<tr ${hh.crash?'class="crr"':''}><td>${hh.lbl}${hh.crash?' ⚠':''}</td>
+      <td style="text-align:right">${fn(hh.g1v)}</td><td style="text-align:right;color:${c1}">${fp(hh.g1r)}</td>
+      <td style="text-align:right">${fn(hh.g2v)}</td><td style="text-align:right;color:${c2}">${fp(hh.g2r)}</td>
+      <td style="text-align:right;color:var(--amber)">${fn(hh.realG2)}</td>
+      <td style="text-align:right;color:var(--tx2)">${fn(hh.totalInv)}</td></tr>`;
+  });
+  el.innerHTML=h+'</tbody></table>';
+}
+
+// ══════════════════════════════════
+// RESULTS
+// ══════════════════════════════════
+function showResults(){
+  document.getElementById('game-panel').classList.add('hidden');
+  document.getElementById('results-panel').classList.remove('hidden');
+  // Zobraz jméno účastníka v export sekci
+  const dn=document.getElementById('display-name');
+  if(dn) dn.textContent=G.participantName||'—';
+  // Reset tlačítko odesílání pro případ opakovaného použití
+  const btnS=document.getElementById('btn-sheets');
+  if(btnS){btnS.disabled=false;btnS.innerHTML='<span>📊</span> Odeslat výsledky do Google Tabulky';}
+  const ss=document.getElementById('sheets-status');
+  if(ss) ss.style.display='none';
+  const ft=G.g2v, ti=G.totalInv;
+  const x1=getXIRR1(), x2=getXIRR2();
+  const rf=ft/G.cumInfl, il=ft-rf, gn=ft-ti;
+  const g1ok=G.g1fv>=G.g1t, g2ok=ft>=G.g2t;
+
+  document.getElementById('fstats').innerHTML=`
+    <div class="metric"><div class="mlabel">Finální portfolio</div><div class="mval bl">${fn(ft)}</div></div>
+    <div class="metric"><div class="mlabel">XIRR Cíl 1</div><div class="mval ${x1!==null&&x1>=0?'gr':'rd'}">${fpp(x1)}</div></div>
+    <div class="metric"><div class="mlabel">XIRR Cíl 2</div><div class="mval ${x2!==null&&x2>=0?'gr':'rd'}">${fpp(x2)}</div></div>
+    <div class="metric"><div class="mlabel">Čistý výnos</div><div class="mval ${gn>=0?'gr':'rd'}">${gn>=0?'+':''}${fn(gn)}</div></div>`;
+  document.getElementById('f-inv').textContent=fkc(ti);
+  document.getElementById('f-val').textContent=fkc(ft);
+
+  const lbs=G.history.map(h=>h.lbl);
+  if(CH.fchart) CH.fchart.destroy();
+  CH.fchart=new Chart(document.getElementById('fchart'),{type:'line',
+    data:{labels:lbs,datasets:[
+      {label:'Nominální hodnota',data:G.history.map(h=>Math.round(h.g2v)),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.08)',borderWidth:2,pointRadius:3,fill:true,tension:0.3},
+      {label:'Reálná hodnota',data:G.history.map(h=>Math.round(h.realG2)),borderColor:'#f59e0b',borderWidth:2,pointRadius:3,borderDash:[5,3],fill:false,tension:0.3},
+      {label:'Celkem investováno',data:G.history.map(h=>Math.round(h.totalInv)),borderColor:'#e879f9',backgroundColor:'rgba(232,121,249,.05)',borderWidth:2,pointRadius:3,borderDash:[2,4],fill:true,tension:0.1},
+      {label:'Cíl',data:G.history.map(()=>Math.round(G.g2t)),borderColor:'rgba(16,185,129,.4)',borderWidth:1,borderDash:[3,3],pointRadius:0,fill:false},
+    ]},options:{...SC,plugins:{legend:{display:false}}}});
+
+  const g1p=G.g1t>0?(G.g1fv/G.g1t*100).toFixed(0):'—';
+  const g2p=G.g2t>0?(ft/G.g2t*100).toFixed(0):'—';
+  document.getElementById('fmetrics').innerHTML=`
+    <div class="ri"><span class="rl">Počáteční kapitál</span><span class="rv">${fkc(G.cap)}</span></div>
+    <div class="ri"><span class="rl">Celkem investováno</span><span class="rv">${fkc(ti)}</span></div>
+    <div class="ri"><span class="rl">Finální hodnota</span><span class="rv" style="color:#93c5fd">${fkc(ft)}</span></div>
+    <div class="ri"><span class="rl">Čistý výnos</span><span class="rv" style="color:${gn>=0?'#10b981':'#ef4444'}">${gn>=0?'+':''}${fkc(gn)}</span></div>
+    <div class="ri"><span class="rl">XIRR Cíl 1</span><span class="rv" style="color:${x1!==null&&x1>=0?'#10b981':'#ef4444'}">${fpp(x1)}</span></div>
+    <div class="ri"><span class="rl">XIRR Cíl 2</span><span class="rv" style="color:${x2!==null&&x2>=0?'#10b981':'#ef4444'}">${fpp(x2)}</span></div>
+    <div class="ri"><span class="rl">Reálná fin. hodnota G2</span><span class="rv">${fkc(rf)}</span></div>
+    <div class="ri"><span class="rl">Ztráta inflací</span><span class="rv" style="color:#f59e0b">−${fkc(il)}</span></div>`;
+  document.getElementById('fgoals').innerHTML=`
+    <div class="ri"><span class="rl"><span class="badge bg1" style="margin-right:5px">C1</span>${G.g1name}</span><span class="rv" style="color:${g1ok?'#10b981':'#ef4444'}">${g1p} % ${g1ok?'✓':'✗'}</span></div>
+    <div class="ri"><span class="rl"><span class="badge bg2" style="margin-right:5px">C2</span>${G.g2name}</span><span class="rv" style="color:${g2ok?'#10b981':'#ef4444'}">${g2p} % ${g2ok?'✓':'✗'}</span></div>
+    <div class="ri"><span class="rl">Reálná hodnota G2</span><span class="rv">${fkc(rf)}</span></div>`;
+  document.getElementById('flesson').textContent=g2ok
+    ?`🏆 Gratulace! Dosáhli jste cíle „${G.g2name}". XIRR ${fpp(x2)} měří skutečnou výkonnost s ohledem na načasování všech vkladů — to je přesnější než průměrný roční výnos. Reálná hodnota je nižší o inflační erozi.`
+    :`📚 Cíle „${G.g2name}" jste nedosáhli. XIRR ${fpp(x2)} ukazuje skutečnou výkonnost vašich průběžných vkladů. Zvažte: vyšší měsíční úložku, agresivnější alokaci v růstové fázi nebo více dluhopisů před krachem.`;
+}
+
+// ══════════════════════════════════
+// TABS & RESET
+// ══════════════════════════════════
+function showTab(nm){
+  ['ov','po','ch','hi'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el) el.classList.toggle('hidden',t!==nm);
+  });
+  document.querySelectorAll('.tab').forEach((b,i)=>{
+    b.classList.toggle('active',['ov','po','ch','hi'][i]===nm);
+  });
+  if(nm==='po') renderPortTab();
+  if(nm==='ch') setTimeout(updateCharts,50);
+}
+
+function resetGame(){
+  G={}; alloc1=mkA0(); alloc2=mkA0(); ra1=mkA0(); ra2=mkA0();
+  Object.values(CH).forEach(c=>{try{c.destroy();}catch(e){}});
+  CH={};
+  document.getElementById('nov').classList.remove('open');
+  document.getElementById('rov').classList.remove('open');
+  document.getElementById('setup-panel').classList.remove('hidden');
+  document.getElementById('game-panel').classList.add('hidden');
+  document.getElementById('results-panel').classList.add('hidden');
+  buildAlloc('a1rows',alloc1,'a1fill','a1tot','w1');
+  buildAlloc('a2rows',alloc2,'a2fill','a2tot','w2');
+  ['n-cap','n-inf','n-mon','n-g1t','n-g1s','n-g2t'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['s-cap','s-inf','s-mon','s-g1t','s-g1s','s-g2t'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=0;});
+  document.getElementById('g1name').value='';
+  document.getElementById('g2name').value='';
+  document.getElementById('participant-name').value='';
+  document.getElementById('annual-prev').textContent='0 Kč';
+  document.getElementById('g2rem').textContent='100';
+}
+
+// ══════════════════════════════════
+// EXPORT — Google Sheets + TXT
+// ══════════════════════════════════
+
+// ⚠ UČITEL: Po nasazení Apps Scriptu vložte sem URL webové aplikace:
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwO3_FDI9KPKHljU_FteGGdNT18aLCwW132ifP40_k3IEWeljpN4fFGHTm1t6grqnXo/exec';
+// Příklad: 'https://script.google.com/macros/s/AKfycbx.../exec'
+
+function buildExportData(){
+  const ft=G.g2v, ti=G.totalInv;
+  const x1=getXIRR1(), x2=getXIRR2();
+  const rf=ft/G.cumInfl, il=ft-rf, gn=ft-ti;
+  const g1ok=G.g1fv>=G.g1t, g2ok=ft>=G.g2t;
+  const g1pct=G.g1t>0?(G.g1fv/G.g1t*100).toFixed(1):0;
+  const g2pct=G.g2t>0?(ft/G.g2t*100).toFixed(1):0;
+  return {
+    name:        G.participantName||'Neznámý',
+    g1name:      G.g1name,
+    g1target:    Math.round(G.g1t),
+    g1value:     Math.round(G.g1fv),
+    g1pct:       parseFloat(g1pct),
+    xirr1:       x1!==null?parseFloat(x1.toFixed(2)):null,
+    g1ok:        g1ok,
+    g2name:      G.g2name,
+    g2target:    Math.round(G.g2t),
+    g2value:     Math.round(ft),
+    g2real:      Math.round(rf),
+    g2pct:       parseFloat(g2pct),
+    xirr2:       x2!==null?parseFloat(x2.toFixed(2)):null,
+    g2ok:        g2ok,
+    capital:     Math.round(G.cap),
+    totalInvested: Math.round(ti),
+    netGain:     Math.round(gn),
+    inflation:   G.inf,
+    inflationLoss: Math.round(il),
+  };
+}
+
+async function sendToSheets(){
+  const btn=document.getElementById('btn-sheets');
+  const status=document.getElementById('sheets-status');
+
+  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL==='VLOŽTE_SEM_URL_Z_APPS_SCRIPT'){
+    status.className='status-err';
+    status.style.display='block';
+    status.textContent='⚠ Apps Script URL není nastavena. Viz instrukce v souboru InvestGym_AppScript.gs.';
+    return;
+  }
+
+  btn.disabled=true;
+  btn.textContent='⏳ Odesílám…';
+  status.className='status-loading';
+  status.style.display='block';
+  status.textContent='Připojuji se ke Google Tabulce…';
+
+  try{
+    const data=buildExportData();
+    const resp=await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      mode:'no-cors', // Google Apps Script vyžaduje no-cors
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data),
+    });
+    // no-cors vrací opaque response — pokud nedojde k chybě, považujeme za úspěch
+    status.className='status-ok';
+    status.textContent=`✓ Výsledky odeslány do Google Tabulky! (${new Date().toLocaleTimeString('cs-CZ')})`;
+    btn.textContent='✓ Odesláno';
+  }catch(err){
+    status.className='status-err';
+    status.textContent=`✗ Chyba odeslání: ${err.message}. Zkuste stáhnout TXT soubor.`;
+    btn.disabled=false;
+    btn.innerHTML='<span>📊</span> Odeslat výsledky do Google Tabulky';
+  }
+}
+
+function downloadTXT(){
+  const d=buildExportData();
+  const now=new Date().toLocaleString('cs-CZ',{timeZone:'Europe/Prague'});
+  const sep='─'.repeat(52);
+  const lines=[
+    '╔════════════════════════════════════════════════════╗',
+    '║           INVEST GYM — VÝSLEDEK SIMULACE           ║',
+    '╚════════════════════════════════════════════════════╝',
+    '',
+    `  Datum a čas:    ${now}`,
+    `  Účastník:       ${d.name}`,
+    '',
+    sep,
+    '  NASTAVENÍ SIMULACE',
+    sep,
+    `  Počáteční kapitál:    ${d.capital.toLocaleString('cs-CZ')} Kč`,
+    `  Roční inflace:        ${d.inflation} %`,
+    `  Celkem investováno:   ${d.totalInvested.toLocaleString('cs-CZ')} Kč`,
+    '',
+    sep,
+    `  CÍL 1 — "${d.g1name}"  (3letý horizont)`,
+    sep,
+    `  Cílová částka:        ${d.g1target.toLocaleString('cs-CZ')} Kč`,
+    `  Dosažená hodnota:     ${d.g1value.toLocaleString('cs-CZ')} Kč`,
+    `  Splněno:              ${d.g1pct} %   ${d.g1ok?'✓ SPLNĚNO':'✗ NESPLNĚNO'}`,
+    `  XIRR:                 ${d.xirr1!==null?d.xirr1+' %':'—'}`,
+    '',
+    sep,
+    `  CÍL 2 — "${d.g2name}"  (10letý horizont)`,
+    sep,
+    `  Cílová částka:        ${d.g2target.toLocaleString('cs-CZ')} Kč`,
+    `  Dosažená hodnota:     ${d.g2value.toLocaleString('cs-CZ')} Kč`,
+    `  Reálná hodnota:       ${d.g2real.toLocaleString('cs-CZ')} Kč`,
+    `  Splněno:              ${d.g2pct} %   ${d.g2ok?'✓ SPLNĚNO':'✗ NESPLNĚNO'}`,
+    `  XIRR:                 ${d.xirr2!==null?d.xirr2+' %':'—'}`,
+    '',
+    sep,
+    '  CELKOVÉ VÝSLEDKY',
+    sep,
+    `  Čistý výnos:          ${d.netGain>=0?'+':''}${d.netGain.toLocaleString('cs-CZ')} Kč`,
+    `  Ztráta inflací:       -${d.inflationLoss.toLocaleString('cs-CZ')} Kč`,
+    '',
+    sep,
+    '  XIRR (Internal Rate of Return upravená o načasování)',
+    '  měří skutečnou výkonnost s ohledem na všechny vklady.',
+    sep,
+    '',
+    '  Invest Gym · Simulátor investování pro střední školy',
+  ];
+  const txt=lines.join('\n');
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const safeName=(d.name||'vysledek').replace(/[^a-zA-Z0-9_\- ]/g,'').trim().replace(/\s+/g,'_');
+  a.href=url;
+  a.download=`InvestGym_${safeName}_${new Date().toISOString().slice(0,10)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+
+<script>
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+sync('s-cap','n-cap');
+sync('s-inf','n-inf');
+sync('s-mon','n-mon',()=>document.getElementById('annual-prev').textContent=fkc((parseFloat(document.getElementById('n-mon').value)||0)*12));
+sync('s-g1t','n-g1t');
+sync('s-g2t','n-g2t');
+sync('s-g1s','n-g1s',()=>{
+  const v=parseInt(document.getElementById('s-g1s').value)||0;
+  document.getElementById('g2rem').textContent=100-v;
+  document.getElementById('n-g1s').value=v;
+});
+buildAlloc('a1rows',alloc1,'a1fill','a1tot','w1');
+buildAlloc('a2rows',alloc2,'a2fill','a2tot','w2');
+</script>
+</body>
+</html>
